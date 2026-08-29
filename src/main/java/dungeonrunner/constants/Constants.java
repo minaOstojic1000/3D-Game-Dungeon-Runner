@@ -54,7 +54,7 @@ public class Constants {
     public static final double THORNS_COL_GAP    = THORNS_ROW_GAP;
     public static final double THORNS_HEIGHT    = WALL_HEIGHT * 0.5;
     public static final double THORNS_SPEED    = 0.5;
-    public static final double THORNS_PERIOD    = 1;
+    public static final double THORNS_PERIOD    = 3;
     public static final Color THORNS_DIFFUSE_COLOR  = Color.color(0.18, 0.18, 0.19);
     public static final Color THORNS_SPECULAR_COLOR = Color.color(0.10, 0.10, 0.11);
 
@@ -79,4 +79,5 @@ public class Constants {
     public static final double PLAYER_MOVE_SPEED     = 0.02;
     public static final double PLAYER_ROTATION_SPEED = 0.05;
     public static final double PLAYER_RADIUS         = 0.25;
+    public static final int PLAYER_LIVES         = 3;
 }

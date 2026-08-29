@@ -2,20 +2,19 @@ package dungeonrunner;
 
 import dungeonrunner.constants.Constants;
 import dungeonrunner.constants.Enums;
+import dungeonrunner.constants.PaneConstants;
 import dungeonrunner.figures.CircularSaw;
 import dungeonrunner.figures.Octahedron;
 import dungeonrunner.figures.Thorns;
+import dungeonrunner.infoPanes.AdditionalInformation;
+import dungeonrunner.infoPanes.EndOfGame;
+import dungeonrunner.interfaces.IPickup;
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.scene.AmbientLight;
-import javafx.scene.Group;
-import javafx.scene.PerspectiveCamera;
-import javafx.scene.PointLight;
-import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
+import javafx.scene.*;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Material;
@@ -26,6 +25,7 @@ import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.util.List;
 import java.util.Objects;
 
 public class DungeonRunner extends Application {
@@ -234,7 +234,7 @@ public class DungeonRunner extends Application {
         updateCameraMount ( );
     }
 
-    private void setupInput ( Scene scene ) {
+    private void setupInput(Scene scene) {
         scene.setOnKeyPressed ( event -> {
             switch ( event.getCode ( ) ) {
                 case UP: {
@@ -308,23 +308,46 @@ public class DungeonRunner extends Application {
 
     @Override
     public void start ( Stage stage ) {
-        this.player = new Player ( Constants.PLAYER_START_X, Constants.PLAYER_START_Y );
-        this.world = new Group ( );
 
-        buildDungeon ( );
-        setupLighting ( );
-        setupCamera ( );
+        Group root = new Group();
 
-        Scene scene = new Scene (
+        Scene mainScene = new Scene(root, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
+
+        this.player = new Player(Constants.PLAYER_START_X, Constants.PLAYER_START_Y, Constants.PLAYER_LIVES);
+        this.world = new Group();
+
+        buildDungeon();
+        setupLighting();
+        setupCamera();
+
+        SubScene worldScene = new SubScene (
                 this.world,
                 Constants.SCREEN_WIDTH,
                 Constants.SCREEN_HEIGHT,
                 true,
                 SceneAntialiasing.BALANCED
         );
-        scene.setCamera ( this.camera );
+        worldScene.setCamera(this.camera);
 
-        setupInput ( scene );
+        root.getChildren().add(worldScene);
+
+        setupInput(mainScene);
+
+        List<IPickup> pickups = IPickup.getPickups();
+
+        EndOfGame endOfGame = new EndOfGame(
+                Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT, 0, 0
+        );
+        root.getChildren().add(endOfGame);
+
+        AdditionalInformation info = new AdditionalInformation(
+                Constants.SCREEN_WIDTH, PaneConstants.INFO_PANE_HEIGHT, 0, 0,
+                Constants.PLAYER_LIVES
+        );
+        root.getChildren().add(info);
+        info.show();
+
+        player.setUpLives(info.getLives());
 
         this.timer = new AnimationTimer ( ) {
             @Override
@@ -333,18 +356,30 @@ public class DungeonRunner extends Application {
 
                 updateCameraMount ( );
                 updateTorch ( );
+                info.updateAll(now);
 
-                if ( player.isAtExit ( map ) ) {
+                if (player.isAtExit(map)) {
                     timer.stop ( );
+                    endOfGame.show(PaneConstants.WIN_MSG);
+                }
+                else if (player.getRestLives() == 0) {
+                    timer.stop();
+                    endOfGame.show(PaneConstants.LOSE_MSG);
+                }
+
+                for (IPickup pickup : pickups) {
+                    if (pickup.touchesPlayer(player)) {
+                        pickup.affect(player);
+                    }
                 }
             }
         };
         timer.start ( );
 
-        stage.setTitle ( "Beg iz tamnice" );
-        stage.setScene ( scene );
-        stage.setResizable ( false );
-        stage.show ( );
+        stage.setTitle("Escape dungeon");
+        stage.setScene(mainScene);
+        stage.setResizable(false);
+        stage.show();
     }
 
     public static void main ( String[] args ) {

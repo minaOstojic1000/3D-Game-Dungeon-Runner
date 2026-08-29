@@ -1,23 +1,31 @@
 package dungeonrunner.figures;
 
+import dungeonrunner.Player;
+import dungeonrunner.constants.Constants;
+import dungeonrunner.interfaces.IEnemy;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.collections.ObservableFloatArray;
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.paint.Material;
-import javafx.scene.shape.MeshView;
-import javafx.scene.shape.TriangleMesh;
+import javafx.scene.shape.*;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class Thorns extends Group {
+public class Thorns extends Group implements IEnemy {
 
     private int number;
     private double height, width;
     private double startY, endY;
+    private List<MeshView> thorns = new ArrayList<>();
+
+    private boolean visible = false;
 
     public Thorns(double height, double aggWidth, int number,
                       double rowGap, double colGap,
@@ -38,6 +46,8 @@ public class Thorns extends Group {
         setTranslateZ(positionZ);
 
         setUpAnimation(period, speed);
+
+        IEnemy.addEnemy(this);
     }
 
     private void makeFigures(double aggWidth, double rowGap, double colGap, Material material) {
@@ -82,6 +92,7 @@ public class Thorns extends Group {
                 MeshView thorn = makeOne((float)(i * (rowGap + width) + initialDisp), (float)(j * (colGap + width) + initialDisp));
                 thorn.setMaterial(material);
                 this.getChildren().add(thorn);
+                thorns.add(thorn);
             }
             System.out.println();
         }
@@ -125,19 +136,57 @@ public class Thorns extends Group {
 
         double movingTime = height / speed;
 
-        KeyValue startState = new KeyValue(translateYProperty(), startY);
-        KeyValue endState = new KeyValue(translateYProperty(), endY);
+        KeyValue startState = new KeyValue(translateYProperty(), startY); // up
+        KeyValue endState = new KeyValue(translateYProperty(), endY); // down
 
-        KeyFrame startFrame = new KeyFrame(Duration.ZERO, startState);
+        KeyFrame startFrame = new KeyFrame(
+                Duration.ZERO,
+                event -> visible = true,
+                startState
+        );
 
-        KeyFrame endFrame = new KeyFrame(Duration.seconds(movingTime), endState);
+        KeyFrame endFrame = new KeyFrame(
+                Duration.seconds(movingTime),
+                event -> visible = false,
+                endState);
 
-        KeyFrame pauseFrame = new KeyFrame(Duration.seconds(movingTime + periodTime), endState);
+        KeyFrame pauseFrame = new KeyFrame(
+                Duration.seconds(movingTime + periodTime),
+                endState
+        );
 
         Timeline timeline = new Timeline(startFrame, endFrame, pauseFrame);
+        timeline.setOnFinished(event -> visible = true);
         timeline.setAutoReverse(true);
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
+    }
+
+    @Override
+    public boolean touchesPlayer(Player player) {
+
+        if (!visible)
+            return false;
+
+        for(MeshView thorn : thorns) {
+            TriangleMesh mesh = (TriangleMesh) thorn.getMesh();
+            boolean inOne = overlapsThorn(player, mesh);
+            if (inOne) return true;
+        }
+        return false;
+    }
+
+    private boolean overlapsThorn(Player player, TriangleMesh mesh) {
+
+        ObservableFloatArray points = mesh.getPoints();
+
+        double left  = points.get(9) + this.getTranslateX();
+        double right = left + width;
+        double up    = points.get(5) + this.getTranslateZ();
+        double down  = up + width;
+
+        return player.overlapsRectangle(left, right, up, down);
+
     }
 
 }

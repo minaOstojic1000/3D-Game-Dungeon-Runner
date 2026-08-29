@@ -4,4 +4,6 @@ module org.example.dungeonrunner {
 
     exports dungeonrunner;
     exports dungeonrunner.constants;
+    exports dungeonrunner.infoPanes;
+    exports dungeonrunner.figures;
 }

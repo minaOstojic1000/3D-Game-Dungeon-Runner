@@ -1,8 +1,11 @@
 package dungeonrunner;
 
 import dungeonrunner.constants.Constants;
+import dungeonrunner.figures.LifeIndicator;
 import javafx.geometry.Point2D;
 import javafx.scene.transform.Rotate;
+
+import java.util.List;
 
 public class Player {
     private double positionX;
@@ -14,10 +17,15 @@ public class Player {
     private boolean rotateLeft;
     private boolean rotateRight;
 
-    private double startX;
-    private double startY;
+    private final double startX;
+    private final double startY;
+    private final double startDirX;
+    private final double startDirY;
 
-    public Player ( double startX, double startY ) {
+    private int currLife;
+    private List<LifeIndicator> lives;
+
+    public Player ( double startX, double startY, int lives) {
         this.positionX = startX;
         this.positionY = startY;
 
@@ -26,10 +34,24 @@ public class Player {
 
         this.directionX =  1.0;
         this.directionY =  0.0;
+
+        this.startDirX = this.directionX;
+        this.startDirY = this.directionY;
+
+        this.currLife = lives - 1;
+    }
+
+    public Player ( double startX, double startY, List<LifeIndicator> lives) {
+        this(startX, startY, lives.size());
+        this.lives = List.copyOf(lives);
     }
 
     public double getPositionX ( ) { return this.positionX; }
     public double getPositionY ( ) { return this.positionY; }
+
+    public double getPositionWorldX ( ) { return this.positionX * Constants.CELL_SIZE; }
+    public double getPositionWorldY ( ) { return this.positionY * Constants.CELL_SIZE; }
+
     public double getDirectionX ( ) { return this.directionX; }
     public double getDirectionY ( ) { return this.directionY; }
 
@@ -97,14 +119,44 @@ public class Player {
     public void resetPosition() {
         this.positionX = startX;
         this.positionY = startY;
+        this.directionX = startDirX;
+        this.directionY = startDirY;
     }
 
-    public void loseLives(int numOfLives) {
+    public int getCurrLife() { return currLife; }
 
+    public int getRestLives() { return currLife + 1; }
+
+    public void setUpLives(List<LifeIndicator> lives) { this.lives = List.copyOf(lives); }
+
+    public double getRadius() { return Constants.PLAYER_RADIUS; }
+
+    public void loseLives(int numOfLives) {
+        for (int i = 0; i < numOfLives; i++) {
+            if (currLife < 0)
+                return;
+            lives.get(currLife).loseColor();
+            currLife--;
+            System.out.println("damaged!");
+        }
     }
 
     public void takeDamageDefault(int numOfLives) {
         resetPosition();
         loseLives(numOfLives);
+    }
+
+    public boolean overlapsRectangle(double left, double right, double up, double down) {
+
+        double playerX = getPositionWorldX();
+        double playerY = getPositionWorldY();
+
+        double closestX = Math.max(left, Math.min (playerX, right));
+        double closestY = Math.max(up, Math.min(playerY, down));
+
+        double dx = playerX - closestX;
+        double dy = playerY - closestY;
+
+        return dx * dx + dy * dy <= getRadius() * getRadius();
     }
 }
