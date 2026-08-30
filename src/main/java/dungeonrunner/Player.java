@@ -24,6 +24,7 @@ public class Player {
 
     private int currLife;
     private List<LifeIndicator> lives;
+    private boolean hasTheKey = false;
 
     public Player ( double startX, double startY, int lives) {
         this.positionX = startX;
@@ -59,6 +60,9 @@ public class Player {
     public void setMoveBackward ( boolean newValue ) { this.moveBackward = newValue; }
     public void setRotateLeft   ( boolean newValue ) { this.rotateLeft   = newValue; }
     public void setRotateRight  ( boolean newValue ) { this.rotateRight  = newValue; }
+
+    public boolean getHasTheKey() { return hasTheKey; }
+    public void setHasTheKey(boolean hasTheKey) { this.hasTheKey = hasTheKey; }
 
     public void update ( DungeonMap map ) {
         if ( this.moveForward ) {

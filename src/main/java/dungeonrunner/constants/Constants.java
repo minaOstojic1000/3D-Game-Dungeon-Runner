@@ -14,14 +14,15 @@ public class Constants {
     public static final int SAW_ZL = 6;
     public static final int SAW_ZR = 7;
     public static final int THORNS  = 8;
+    public static final int KEY  = 9;
 
     public static final List<Integer> CAN_STEP = List.of(
-            EMPTY, EXIT, THORNS
+            EMPTY, EXIT, THORNS, KEY
     );
 
     public static final int[][] MAP = {
             {1,1,1,1,1,1,1,1,1},
-            {1,0,0,0,1,0,0,0,1},
+            {1,0,0,9,1,0,0,0,1},
             {1,0,8,0,0,0,1,0,1},
             {1,0,3,1,5,0,4,0,1},
             {1,0,0,0,0,0,0,0,1},
@@ -57,6 +58,11 @@ public class Constants {
     public static final double THORNS_PERIOD    = 3;
     public static final Color THORNS_DIFFUSE_COLOR  = Color.color(0.18, 0.18, 0.19);
     public static final Color THORNS_SPECULAR_COLOR = Color.color(0.10, 0.10, 0.11);
+
+    public static final double KEY_HEIGHT    = WALL_HEIGHT * 0.3;
+    public static final double KEY_DURATION    = 3;
+    public static final Color KEY_DIFFUSE_COLOR  = Color.color(0.85, 0.65, 0.20);
+    public static final Color KEY_SPECULAR_COLOR = Color.color(0.95, 0.90, 0.70);
 
     public static final Color WALL_DIFFUSE_COLOR  = Color.rgb ( 110, 110, 110 );
     public static final Color WALL_SPECULAR_COLOR = Color.rgb ( 40,  40,  40 );

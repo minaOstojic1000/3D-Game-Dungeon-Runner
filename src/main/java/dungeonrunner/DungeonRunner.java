@@ -4,6 +4,7 @@ import dungeonrunner.constants.Constants;
 import dungeonrunner.constants.Enums;
 import dungeonrunner.constants.PaneConstants;
 import dungeonrunner.figures.CircularSaw;
+import dungeonrunner.figures.Key;
 import dungeonrunner.figures.Octahedron;
 import dungeonrunner.figures.Thorns;
 import dungeonrunner.infoPanes.AdditionalInformation;
@@ -57,6 +58,11 @@ public class DungeonRunner extends Application {
         PhongMaterial thornsMaterial = new PhongMaterial();
         thornsMaterial.setDiffuseColor ( Constants.THORNS_DIFFUSE_COLOR );
         thornsMaterial.setSpecularColor ( Constants.THORNS_SPECULAR_COLOR );
+
+        PhongMaterial keyMaterial = new PhongMaterial();
+        keyMaterial.setDiffuseColor ( Constants.KEY_DIFFUSE_COLOR );
+        keyMaterial.setSpecularColor ( Constants.KEY_SPECULAR_COLOR );
+        keyMaterial.setSpecularPower(64.0);
 
         PhongMaterial floorMaterial = new PhongMaterial();
         floorMaterial.setDiffuseColor(Color.rgb(60, 40, 20));
@@ -147,6 +153,17 @@ public class DungeonRunner extends Application {
                             thornsMaterial
                     );
                     this.world.getChildren().add(thorns);
+                }
+                else if (tile == Constants.KEY) {
+                    Key key = new Key(
+                            Constants.KEY_HEIGHT,
+                            positionX,
+                            positionY,
+                            positionZ,
+                            Constants.KEY_DURATION,
+                            keyMaterial
+                    );
+                    this.world.getChildren().add(key);
                 }
             }
         }
@@ -357,6 +374,7 @@ public class DungeonRunner extends Application {
                 updateCameraMount ( );
                 updateTorch ( );
                 info.updateAll(now);
+                Key.clean();
 
                 if (player.isAtExit(map)) {
                     timer.stop ( );
