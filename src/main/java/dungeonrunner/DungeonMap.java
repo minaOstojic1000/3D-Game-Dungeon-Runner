@@ -3,12 +3,14 @@ package dungeonrunner;
 import dungeonrunner.constants.Constants;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class DungeonMap {
 
     private int map[][];
     private List<Integer> canStep;
+    private List<Integer> isWall;
 
     public DungeonMap ( int map[][] ) {
         this.map = new int[map.length][map[0].length];
@@ -19,10 +21,7 @@ public class DungeonMap {
             }
         }
 
-        canStep = new ArrayList<>();
-        canStep.add(Constants.EMPTY);
-        canStep.add(Constants.THORNS);
-        canStep.add(Constants.KEY);
+        canStep = new ArrayList<>(Arrays.asList(Constants.EMPTY, Constants.THORNS, Constants.KEY));
     }
 
     public List<Integer> getCanStep() {

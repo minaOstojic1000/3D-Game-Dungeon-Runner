@@ -5,10 +5,7 @@ import dungeonrunner.figures.LifeIndicator;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.transform.Translate;
 
 import java.util.ArrayList;
@@ -16,7 +13,7 @@ import java.util.List;
 
 import static javafx.geometry.Pos.CENTER;
 
-public class AdditionalInformation extends StackPane {
+public class AdditionalInformation extends HBox {
 
     private Label timeLabel;
     private List<LifeIndicator> lives;
@@ -26,11 +23,16 @@ public class AdditionalInformation extends StackPane {
 
         super();
 
-        setLabels();
+        this.setPrefWidth(paneWidth);
+        this.setMaxHeight(paneHeight);
 
         setPlayerLives(numLives);
 
-        this.setPrefSize(paneWidth, paneHeight);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        this.getChildren().add(spacer);
+
+        setLabels();
 
         this.getTransforms().add(
                 new Translate(paneX, paneY)
@@ -45,10 +47,9 @@ public class AdditionalInformation extends StackPane {
         timeLabel.setFont(PaneConstants.LABEL_TIME_FONT);
         timeLabel.setAlignment(CENTER);
 
-        setAlignment(timeLabel, Pos.CENTER_RIGHT);
         setMargin(timeLabel, new Insets(10, 10, 0, 0));
 
-        this.getChildren().addAll(timeLabel);
+        this.getChildren().add(timeLabel);
     }
 
     private void setPlayerLives(int num) {
@@ -69,8 +70,8 @@ public class AdditionalInformation extends StackPane {
         }
 
         livesBox.getChildren().addAll(lives);
-        livesBox.setAlignment(Pos.CENTER_LEFT);
-        setAlignment(livesBox, Pos.CENTER_LEFT);
+        livesBox.setAlignment(Pos.CENTER);
+
         setMargin(livesBox, new Insets(10, 0, 0, 10));
 
         this.getChildren().add(livesBox);

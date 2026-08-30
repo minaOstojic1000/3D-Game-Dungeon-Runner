@@ -9,6 +9,7 @@ import dungeonrunner.figures.Octahedron;
 import dungeonrunner.figures.Thorns;
 import dungeonrunner.infoPanes.AdditionalInformation;
 import dungeonrunner.infoPanes.EndOfGame;
+import dungeonrunner.infoPanes.Game2DPerspective;
 import dungeonrunner.interfaces.IPickup;
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
@@ -54,11 +55,12 @@ public class GameGenerator {
         setUpCamera();
     }
 
-    public void startGame(AdditionalInformation info, EndOfGame endOfGame) {
+    public void startGame(AdditionalInformation info, Game2DPerspective littleMap, EndOfGame endOfGame) {
         player.setUpLives(info.getLives());
-        setUpGameTimer(info, endOfGame);
+        setUpGameTimer(info, littleMap, endOfGame);
         timer.start();
         info.show();
+        littleMap.show();
     }
 
     private void buildDungeon() {
@@ -241,7 +243,7 @@ public class GameGenerator {
         this.player = new Player(Constants.PLAYER_START_X, Constants.PLAYER_START_Y, Constants.PLAYER_LIVES);
     }
 
-    private void setUpGameTimer(AdditionalInformation info, EndOfGame endOfGame) {
+    private void setUpGameTimer(AdditionalInformation info, Game2DPerspective littleMap, EndOfGame endOfGame) {
         List<IPickup> pickups = IPickup.getPickups();
 
         this.timer = new AnimationTimer( ) {
@@ -252,15 +254,19 @@ public class GameGenerator {
                 updateCameraMount ( );
                 updateTorch ( );
                 info.updateAll(now);
+                littleMap.update();
                 Key.clean();
 
                 if (exitUnlocked && player.isAtExit(map)) {
                     timer.stop ( );
                     info.hide();
+                    littleMap.hide();
                     endOfGame.show(PaneConstants.WIN_MSG);
                 }
                 else if (player.getRestLives() == 0) {
                     timer.stop();
+                    info.hide();
+                    littleMap.hide();
                     endOfGame.show(PaneConstants.LOSE_MSG);
                 }
 
@@ -369,4 +375,6 @@ public class GameGenerator {
     public Player getPlayer() {
         return player;
     }
+
+    public DungeonMap getMap() { return map; }
 }

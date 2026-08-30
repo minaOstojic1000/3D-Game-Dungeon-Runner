@@ -9,14 +9,18 @@ import dungeonrunner.figures.Octahedron;
 import dungeonrunner.figures.Thorns;
 import dungeonrunner.infoPanes.AdditionalInformation;
 import dungeonrunner.infoPanes.EndOfGame;
+import dungeonrunner.infoPanes.Game2DPerspective;
 import dungeonrunner.interfaces.IPickup;
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.image.Image;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Material;
 import javafx.scene.paint.PhongMaterial;
@@ -109,13 +113,26 @@ public class DungeonRunner extends Application {
         );
         root.getChildren().add(endOfGame);
 
-        AdditionalInformation info = new AdditionalInformation(
+        StackPane gameInfo = new StackPane();
+        gameInfo.setPrefSize(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
+        root.getChildren().add(gameInfo);
+
+        AdditionalInformation hudInfo = new AdditionalInformation(
                 Constants.SCREEN_WIDTH, PaneConstants.INFO_PANE_HEIGHT, 0, 0,
                 Constants.PLAYER_LIVES
         );
-        root.getChildren().add(info);
+        gameInfo.getChildren().add(hudInfo);
+        gameInfo.setAlignment(hudInfo, Pos.TOP_CENTER);
 
-        generator.startGame(info, endOfGame);
+        Game2DPerspective littleMap = new Game2DPerspective(
+                PaneConstants.PERSP_2D_WIDTH, 0, 0,
+                generator.getMap(), generator.getPlayer()
+        );
+
+        gameInfo.getChildren().add(littleMap);
+        gameInfo.setAlignment(littleMap, Pos.BOTTOM_RIGHT);
+
+        generator.startGame(hudInfo, littleMap, endOfGame);
 
         stage.setTitle("Escape dungeon");
         stage.setScene(mainScene);
