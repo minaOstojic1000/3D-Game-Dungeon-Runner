@@ -100,7 +100,7 @@ public class Player {
     }
 
     public boolean isAtExit ( DungeonMap map ) {
-        return map.get ( ( int ) this.positionX, ( int ) this.positionY ) == Constants.EXIT;
+        return map.get ((int) this.positionX,(int) this.positionY) == Constants.EXIT;
     }
     private boolean canMoveTo ( double x, double y, DungeonMap map ) {
         return isFree ( ( int ) ( x + Constants.PLAYER_RADIUS ), ( int ) ( y + Constants.PLAYER_RADIUS ), map )
@@ -110,8 +110,8 @@ public class Player {
     }
 
     private boolean isFree ( int x, int y, DungeonMap map ) {
-        int tile = map.get ( x, y );
-        return Constants.CAN_STEP.contains(tile);
+        int tile = map.get(x, y);
+        return map.getCanStep().contains(tile);
     }
 
     private void rotate ( double angle ) {

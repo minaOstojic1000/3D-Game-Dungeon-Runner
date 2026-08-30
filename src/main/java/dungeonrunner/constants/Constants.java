@@ -16,10 +16,6 @@ public class Constants {
     public static final int THORNS  = 8;
     public static final int KEY  = 9;
 
-    public static final List<Integer> CAN_STEP = List.of(
-            EMPTY, EXIT, THORNS, KEY
-    );
-
     public static final int[][] MAP = {
             {1,1,1,1,1,1,1,1,1},
             {1,0,0,9,1,0,0,0,1},
@@ -68,6 +64,12 @@ public class Constants {
     public static final Color WALL_SPECULAR_COLOR = Color.rgb ( 40,  40,  40 );
     public static final Color EXIT_DIFFUSE_COLOR  = Color.rgb ( 0, 200,  80 );
     public static final Color EXIT_SPECULAR_COLOR = Color.rgb ( 0,  80,  30 );
+
+    public static final Color FLOOR_DIFFUSE_COLOR  = Color.rgb(60, 40, 20);
+    public static final Color FLOOR_SPECULAR_COLOR = null;
+
+    public static final Color CEILING_DIFFUSE_COLOR  = Color.rgb(25, 25, 45);
+    public static final Color CEILING_SPECULAR_COLOR = null;
 
     public static final Color AMBIENT_LIGHT_COLOR_BRIGHT = Color.rgb(50, 45, 40);
     public static final Color AMBIENT_LIGHT_COLOR_MEDIUM_BRIGHT = Color.rgb(45, 40, 35);
