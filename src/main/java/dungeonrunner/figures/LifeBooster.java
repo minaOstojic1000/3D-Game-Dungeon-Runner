@@ -1,8 +1,7 @@
 package dungeonrunner.figures;
 
-import dungeonrunner.DungeonMap;
+import dungeonrunner.creation.DungeonMap;
 import dungeonrunner.constants.Constants;
-import dungeonrunner.constants.Enums;
 import dungeonrunner.interfaces.IPowerUp;
 import dungeonrunner.Player;
 import dungeonrunner.interfaces.IRotatingItem;
@@ -10,7 +9,6 @@ import javafx.animation.*;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;

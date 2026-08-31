@@ -1,7 +1,7 @@
 
 package dungeonrunner.figures;
 
-import dungeonrunner.DungeonMap;
+import dungeonrunner.creation.DungeonMap;
 import dungeonrunner.constants.Constants;
 import dungeonrunner.interfaces.IPowerUp;
 import dungeonrunner.Player;

@@ -1,6 +1,6 @@
 package dungeonrunner.infoPanes;
 
-import dungeonrunner.DungeonMap;
+import dungeonrunner.creation.DungeonMap;
 import dungeonrunner.Player;
 import dungeonrunner.constants.Constants;
 import dungeonrunner.constants.PaneConstants;

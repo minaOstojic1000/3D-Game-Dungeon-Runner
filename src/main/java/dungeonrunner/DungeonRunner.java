@@ -1,38 +1,16 @@
 package dungeonrunner;
 
 import dungeonrunner.constants.Constants;
-import dungeonrunner.constants.Enums;
 import dungeonrunner.constants.PaneConstants;
-import dungeonrunner.figures.CircularSaw;
-import dungeonrunner.figures.Key;
-import dungeonrunner.figures.Octahedron;
-import dungeonrunner.figures.Thorns;
+import dungeonrunner.creation.GameGenerator;
 import dungeonrunner.infoPanes.AdditionalInformation;
 import dungeonrunner.infoPanes.EndOfGame;
-import dungeonrunner.infoPanes.Game2DPerspective;
 import dungeonrunner.infoPanes.MapChoice;
-import dungeonrunner.interfaces.IPickup;
-import javafx.animation.Animation;
-import javafx.animation.AnimationTimer;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.*;
-import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Material;
-import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.Box;
-import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
-import javafx.util.Duration;
-
-import java.util.List;
-import java.util.Objects;
 
 public class DungeonRunner extends Application {
 

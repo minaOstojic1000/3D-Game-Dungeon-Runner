@@ -1,16 +1,12 @@
 package dungeonrunner;
 
 import dungeonrunner.constants.Constants;
+import dungeonrunner.creation.DungeonMap;
 import dungeonrunner.figures.LifeIndicator;
 import javafx.animation.*;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.layout.Region;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.CullFace;
-import javafx.scene.shape.DrawMode;
-import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
@@ -39,6 +35,9 @@ public class Player {
     private Group shieldViewGroup = null;
     private PauseTransition immuneTimer;
     private Group cameraGroup;
+
+    private boolean directionSwitched = false;
+    private PauseTransition switchDirectionTimer;
 
     public Player (double startX, double startY, int lives, Group cameraGroup) {
         this.positionX = startX;
@@ -71,10 +70,38 @@ public class Player {
     public double getDirectionX ( ) { return this.directionX; }
     public double getDirectionY ( ) { return this.directionY; }
 
-    public void setMoveForward  ( boolean newValue ) { this.moveForward  = newValue; }
-    public void setMoveBackward ( boolean newValue ) { this.moveBackward = newValue; }
-    public void setRotateLeft   ( boolean newValue ) { this.rotateLeft   = newValue; }
-    public void setRotateRight  ( boolean newValue ) { this.rotateRight  = newValue; }
+    public void setMoveForward(boolean newValue) {
+        if (!directionSwitched)
+            this.moveForward = newValue;
+        else {
+            this.moveBackward = newValue;
+            this.moveForward = false;
+        }
+    }
+    public void setMoveBackward(boolean newValue) {
+        if (!directionSwitched)
+            this.moveBackward  = newValue;
+        else {
+            this.moveForward = newValue;
+            this.moveBackward = false;
+        }
+    }
+    public void setRotateLeft(boolean newValue) {
+        if (!directionSwitched)
+            this.rotateLeft  = newValue;
+        else {
+            this.rotateRight = newValue;
+            this.rotateLeft = false;
+        }
+    }
+    public void setRotateRight(boolean newValue) {
+        if (!directionSwitched)
+            this.rotateRight  = newValue;
+        else {
+            this.rotateLeft = newValue;
+            this.rotateRight = false;
+        }
+    }
 
     public boolean getHasTheKey() { return hasTheKey; }
     public void setHasTheKey(boolean hasTheKey) { this.hasTheKey = hasTheKey; }
@@ -249,5 +276,18 @@ public class Player {
 
     public boolean getImmune() {
         return immune;
+    }
+
+    public void switchDirection(double effectDuration) {
+
+        if (switchDirectionTimer == null) {
+            switchDirectionTimer = new PauseTransition(Duration.seconds(effectDuration));
+            switchDirectionTimer.setOnFinished(event -> {
+                directionSwitched = false;
+            });
+        }
+
+        directionSwitched = true;
+        switchDirectionTimer.playFromStart();
     }
 }

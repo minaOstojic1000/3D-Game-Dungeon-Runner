@@ -1,4 +1,4 @@
-package dungeonrunner;
+package dungeonrunner.creation;
 
 import dungeonrunner.constants.Constants;
 

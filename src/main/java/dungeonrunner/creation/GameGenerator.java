@@ -1,5 +1,6 @@
-package dungeonrunner;
+package dungeonrunner.creation;
 
+import dungeonrunner.Player;
 import dungeonrunner.constants.Constants;
 import dungeonrunner.constants.Enums;
 import dungeonrunner.constants.PaneConstants;
@@ -15,7 +16,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Pos;
 import javafx.scene.*;
-import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Material;
@@ -26,7 +26,6 @@ import javafx.scene.transform.Translate;
 import javafx.util.Duration;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
 public class GameGenerator {
@@ -265,21 +264,15 @@ public class GameGenerator {
     }
 
     private void setUpGameTimer(AdditionalInformation info, EndOfGame endOfGame) {
+
         List<IPickup> pickups = IPickup.getPickups();
-        Random random = new Random();
         final int numMoments = 10;
-        final double[] nextHeartMoments = new double[numMoments];
-        final double[] nextShieldMoments = new double[numMoments];
-        for (int i = 0; i < numMoments; i++) {
-            nextHeartMoments[i] = random.nextDouble(Constants.LIFE_BOOSTER_FREQUENCY);
-            nextShieldMoments[i] = random.nextDouble(Constants.SHIELD_FREQUENCY);
-        }
+        RandomItemsGenerator itemsGenerator = new RandomItemsGenerator(numMoments, world, map);
 
         this.timer = new AnimationTimer() {
             private double last;
             private double timeSlices = 0;
-            private int currMomentH = 0, currMomentS;
-            private double momentsSumH = 0, momentsSumS = 0;
+
             @Override
             public void handle(long now) {
                 if ( this.last == 0 ) {
@@ -289,8 +282,7 @@ public class GameGenerator {
                 this.last = now;
 
                 timeSlices += dt;
-                generateHearts(dt);
-                generateShields(dt);
+                itemsGenerator.generateItems(timeSlices);
 
                 player.update(map);
 
@@ -319,45 +311,9 @@ public class GameGenerator {
                     }
                 }
 
-                LifeBooster.cleanExpired();
-                Shield.cleanExpired();
+                itemsGenerator.cleanExpiredItems();
+
                 updateExit();
-            }
-            private void generateHearts(double dt) {
-
-                while ((timeSlices - momentsSumH) >= nextHeartMoments[currMomentH]) {
-
-                    momentsSumH += nextHeartMoments[currMomentH];
-                    currMomentH = (currMomentH + 1) % numMoments;
-
-                    LifeBooster life = LifeBooster.generateRandomLifeBooster(
-                            map,
-                            Constants.LIFE_BOOSTER_SIZE,
-                            Constants.LIFE_BOOSTER_DIFFUSE,
-                            Constants.LIFE_BOOSTER_SPECULAR,
-                            Constants.LIFE_BOOSTER_DURATION,
-                            Constants.LIFE_BOOSTER_ROTATION_TIME
-                    );
-                    world.getChildren().add(life);
-                }
-            }
-            private void generateShields(double dt) {
-
-                while ((timeSlices - momentsSumS) >= nextShieldMoments[currMomentS]) {
-
-                    momentsSumS += nextShieldMoments[currMomentS];
-                    currMomentS = (currMomentS + 1) % numMoments;
-
-                    Shield shield = Shield.generateRandomShields(
-                            map,
-                            Constants.SHIELD_RADIUS,
-                            Constants.SHIELD_DIFFUSE, Constants.SHIELD_SPECULAR,
-                            Constants.IMMUNITY_DURATION,
-                            Constants.SHIELD_DURATION,
-                            Constants.SHIELD_ROTATION_TIME
-                    );
-                    world.getChildren().add(shield);
-                }
             }
         };
     }

@@ -23,6 +23,7 @@ public class Constants {
 
     public static final double LIFE_BOOSTER_FREQUENCY = 10;
     public static final double SHIELD_FREQUENCY = 15;
+    public static final double POTION_FREQUENCY = 10;
 
     public static final double CELL_SIZE      = 2.0;  
     public static final double WALL_HEIGHT    = 2.0;  
@@ -133,5 +134,13 @@ public class Constants {
                     Insets.EMPTY
             )
     );
+
+    public static final double POTION_RADIUS = CELL_SIZE / 8.0;
+    public static final Color POTION_DIFFUSE_LIQUID = Color.color(0.02, 0.43, 0.29, 0.75);
+    public static final Color POTION_DIFFUSE_GLASS = Color.color(0.12, 0.45, 0.95, 0.25);
+    public static final Color POTION_SPECULAR = Color.color(0.50, 0.55, 0.60);
+    public static final double POTION_DURATION = 10;
+    public static final double POTION_EFFECT_DURATION = 10;
+    public static final double POTION_ROTATION_TIME = 3;
 
 }
