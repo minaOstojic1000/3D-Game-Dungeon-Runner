@@ -54,7 +54,7 @@ public class Heart extends MeshView {
         float w = (float)(width / 2.);
         float[] points = {
                 0, -h, 0, // 0
-                0, h, 0, // 1
+                0, 0.8f * h, 0, // 1
                 0, 0, -w * 0.3f, // 2
                 0, 0, w * 0.3f, // 3
                 0.75f * w, -0.9f * h, 0, // 4

@@ -35,11 +35,11 @@ public class MapChoice extends ChoicePane {
     public int[][] getMap() {
         return Maps.MAPS.get(selectedChoice);
     }
-/*
-    public Image getMapBackground() {
-        return Maps.MAP_BACKGROUNDS_IMAGE[selectedChoice];
+
+    public Image getMapBricks() {
+        return Maps.MAP_BRICKS_IMAGES[selectedChoice];
     }
-*/
+
     @Override
     protected DropShadow getSelectedImgShadow() {
         return PaneConstants.SELECTED_MAP_IMG_SHADOW;

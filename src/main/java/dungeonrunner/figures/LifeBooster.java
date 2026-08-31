@@ -5,10 +5,9 @@ import dungeonrunner.constants.Constants;
 import dungeonrunner.constants.Enums;
 import dungeonrunner.interfaces.IPowerUp;
 import dungeonrunner.Player;
+import dungeonrunner.interfaces.IRotatingItem;
 import javafx.animation.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Shape;
-import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
 import java.awt.geom.Point2D;
@@ -16,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class LifeBooster extends Heart implements IPowerUp {
+public class LifeBooster extends Heart implements IPowerUp, IRotatingItem {
 
     private PauseTransition myTimer;
     private static List<LifeBooster> expiredHearts = new ArrayList<>();
@@ -67,47 +66,9 @@ public class LifeBooster extends Heart implements IPowerUp {
         return life;
     }
 
-    private void setUpAnimation(double duration) {
-        Rotate rotation = new Rotate(0, Enums.AXIS.Y.getValue());
-        double positionY = getPositionY();
-        rotation.setPivotY(positionY);
-        this.getTransforms().add(rotation);
-
-        Timeline timelineR = new Timeline(
-                new KeyFrame(
-                        Duration.ZERO,
-                        new KeyValue(rotation.angleProperty(), 0)
-                ),
-                new KeyFrame(
-                        Duration.seconds(duration),
-                        new KeyValue(rotation.angleProperty(), 360)
-                )
-        );
-
-        double disp = 0.2 * height;
-
-        Timeline timelineT = new Timeline(
-                new KeyFrame(
-                        Duration.ZERO,
-                        new KeyValue(
-                                this.translateYProperty(),
-                                positionY - disp,
-                                Interpolator.EASE_BOTH)
-                ),
-                new KeyFrame(
-                        Duration.seconds(duration / 2.),
-                        new KeyValue(
-                                this.translateYProperty(),
-                                positionY + disp,
-                                Interpolator.EASE_BOTH
-                        )
-                )
-        );
-        timelineR.setCycleCount(Animation.INDEFINITE);
-        timelineR.play();
-        timelineT.setCycleCount(Animation.INDEFINITE);
-        timelineT.setAutoReverse(true);
-        timelineT.play();
+    @Override
+    public double getHeight() {
+        return height;
     }
 
     private void setMyTimer(double seconds) {
@@ -128,11 +89,7 @@ public class LifeBooster extends Heart implements IPowerUp {
 
     @Override
     public boolean touchesPlayer(Player player) {
-        double centersD = Point2D.distance(
-                getPositionX(), getPositionZ(),
-                player.getPositionWorldX(), player.getPositionWorldY()
-        );
-        return centersD <= this.radius + player.getRadius();
+        return player.overlapsCircle(radius, getPositionX(), getPositionZ());
     }
 
     public static void cleanExpired() {

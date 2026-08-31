@@ -1,7 +1,6 @@
 package dungeonrunner;
 
 import dungeonrunner.constants.Constants;
-import dungeonrunner.constants.Maps;
 import dungeonrunner.constants.Enums;
 import dungeonrunner.constants.PaneConstants;
 import dungeonrunner.figures.*;
@@ -14,7 +13,6 @@ import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.image.Image;
@@ -43,7 +41,6 @@ public class GameGenerator {
     private final SubScene scene;
     private Box exit;
     private boolean exitUnlocked = false;
-    private int selectedMap = 0;
     private Game2DPerspective littleMap;
     private MapChoice mapChoice;
     private AdditionalInformation info;
@@ -53,6 +50,7 @@ public class GameGenerator {
     public GameGenerator(SubScene worldScene) {
         this.world = (Group)worldScene.getRoot();
         this.scene = worldScene;
+        this.cameraMount = new Group();
     }
 
     public void generateGame(MapChoice mapChoice, AdditionalInformation info, StackPane gameInfo, EndOfGame endOfGame) {
@@ -62,8 +60,9 @@ public class GameGenerator {
         this.endOfGame = endOfGame;
 
         createPlayer();
-        setUpLighting();
         setUpCamera();
+        setUpLighting();
+
         mapChoice.addAction(this::startGame);
         mapChoice.show();
     }
@@ -80,9 +79,7 @@ public class GameGenerator {
 
     private void buildDungeon() {
         PhongMaterial wallMaterial = buildMaterial(Constants.WALL_DIFFUSE_COLOR, Constants.WALL_SPECULAR_COLOR);
-        Image texture = new Image(
-                Objects.requireNonNull(getClass().getResourceAsStream("/dungeonrunner/backgrounds/bricks.jpg")));
-        wallMaterial.setDiffuseMap(texture);
+        wallMaterial.setDiffuseMap(mapChoice.getMapBricks());
 
         PhongMaterial sawMaterial = buildMaterial(Constants.SAW_DIFFUSE_COLOR, Constants.SAW_SPECULAR_COLOR);
 
@@ -264,7 +261,7 @@ public class GameGenerator {
     }
 
     private void createPlayer() {
-        this.player = new Player(Constants.PLAYER_START_X, Constants.PLAYER_START_Y, Constants.PLAYER_LIVES);
+        this.player = new Player(Constants.PLAYER_START_X, Constants.PLAYER_START_Y, Constants.PLAYER_LIVES, cameraMount);
     }
 
     private void setUpGameTimer(AdditionalInformation info, EndOfGame endOfGame) {
@@ -274,8 +271,8 @@ public class GameGenerator {
         final double[] nextHeartMoments = new double[numMoments];
         final double[] nextShieldMoments = new double[numMoments];
         for (int i = 0; i < numMoments; i++) {
-            nextHeartMoments[i] = random.nextDouble(10);
-            nextShieldMoments[i] = random.nextDouble(30);
+            nextHeartMoments[i] = random.nextDouble(Constants.LIFE_BOOSTER_FREQUENCY);
+            nextShieldMoments[i] = random.nextDouble(Constants.SHIELD_FREQUENCY);
         }
 
         this.timer = new AnimationTimer() {
@@ -293,6 +290,7 @@ public class GameGenerator {
 
                 timeSlices += dt;
                 generateHearts(dt);
+                generateShields(dt);
 
                 player.update(map);
 
@@ -322,6 +320,7 @@ public class GameGenerator {
                 }
 
                 LifeBooster.cleanExpired();
+                Shield.cleanExpired();
                 updateExit();
             }
             private void generateHearts(double dt) {
@@ -337,9 +336,27 @@ public class GameGenerator {
                             Constants.LIFE_BOOSTER_DIFFUSE,
                             Constants.LIFE_BOOSTER_SPECULAR,
                             Constants.LIFE_BOOSTER_DURATION,
-                            Constants.LIFE_BOOSTER_ROTATION
+                            Constants.LIFE_BOOSTER_ROTATION_TIME
                     );
                     world.getChildren().add(life);
+                }
+            }
+            private void generateShields(double dt) {
+
+                while ((timeSlices - momentsSumS) >= nextShieldMoments[currMomentS]) {
+
+                    momentsSumS += nextShieldMoments[currMomentS];
+                    currMomentS = (currMomentS + 1) % numMoments;
+
+                    Shield shield = Shield.generateRandomShields(
+                            map,
+                            Constants.SHIELD_RADIUS,
+                            Constants.SHIELD_DIFFUSE, Constants.SHIELD_SPECULAR,
+                            Constants.IMMUNITY_DURATION,
+                            Constants.SHIELD_DURATION,
+                            Constants.SHIELD_ROTATION_TIME
+                    );
+                    world.getChildren().add(shield);
                 }
             }
         };
@@ -427,7 +444,7 @@ public class GameGenerator {
         this.camera.setFarClip(Constants.CAMERA_FAR_CLIP);
         this.camera.setFieldOfView(Constants.CAMERA_FIELD_OF_VIEW);
 
-        this.cameraMount = new Group(this.camera);
+        this.cameraMount.getChildren().add(this.camera);
 
         this.world.getChildren().add(cameraMount);
 

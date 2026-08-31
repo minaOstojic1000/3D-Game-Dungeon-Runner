@@ -5,6 +5,7 @@ import dungeonrunner.constants.Enums;
 import dungeonrunner.infoPanes.EndOfGame;
 import dungeonrunner.interfaces.IEnemy;
 import dungeonrunner.interfaces.IPowerUp;
+import dungeonrunner.interfaces.IRotatingItem;
 import javafx.animation.*;
 import javafx.scene.Group;
 import javafx.scene.paint.Material;
@@ -18,7 +19,7 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Key extends Group implements IPowerUp {
+public class Key extends Group implements IPowerUp, IRotatingItem {
 
     private final double height;
     private final double positionX;
@@ -106,46 +107,14 @@ public class Key extends Group implements IPowerUp {
         this.getChildren().addAll(box1, box2, box3, box4, box5, box6);
     }
 
-    private void setUpAnimation(double duration) {
-        Rotate rotation = new Rotate(0, Enums.AXIS.Y.getValue());
-        rotation.setPivotY(positionY);
-        this.getTransforms().add(rotation);
+    @Override
+    public double getPositionY() {
+        return positionY;
+    }
 
-        Timeline timelineR = new Timeline(
-                new KeyFrame(
-                        Duration.ZERO,
-                        new KeyValue(rotation.angleProperty(), 0)
-                ),
-                new KeyFrame(
-                        Duration.seconds(duration),
-                        new KeyValue(rotation.angleProperty(), 360)
-                )
-        );
-
-        double disp = 0.2 * height;
-
-        Timeline timelineT = new Timeline(
-                new KeyFrame(
-                        Duration.ZERO,
-                        new KeyValue(
-                                this.translateYProperty(),
-                                positionY - disp,
-                                Interpolator.EASE_BOTH)
-                        ),
-                new KeyFrame(
-                        Duration.seconds(duration / 2.),
-                        new KeyValue(
-                                this.translateYProperty(),
-                                positionY + disp,
-                                Interpolator.EASE_BOTH
-                        )
-                )
-        );
-        timelineR.setCycleCount(Animation.INDEFINITE);
-        timelineR.play();
-        timelineT.setCycleCount(Animation.INDEFINITE);
-        timelineT.setAutoReverse(true);
-        timelineT.play();
+    @Override
+    public double getHeight() {
+        return height;
     }
 
     public void show() {
@@ -175,10 +144,6 @@ public class Key extends Group implements IPowerUp {
 
     @Override
     public boolean touchesPlayer(Player player) {
-        double centersD = Point2D.distance(
-                positionX, positionZ,
-                player.getPositionWorldX(), player.getPositionWorldY()
-        );
-        return centersD <= this.radius + player.getRadius();
+        return player.overlapsCircle(radius, positionX, positionZ);
     }
 }

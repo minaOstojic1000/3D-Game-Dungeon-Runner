@@ -2,8 +2,17 @@ package dungeonrunner;
 
 import dungeonrunner.constants.Constants;
 import dungeonrunner.figures.LifeIndicator;
+import javafx.animation.*;
 import javafx.geometry.Point2D;
+import javafx.scene.Group;
+import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.CullFace;
+import javafx.scene.shape.DrawMode;
+import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
+import javafx.util.Duration;
 
 import java.util.List;
 
@@ -26,7 +35,12 @@ public class Player {
     private List<LifeIndicator> lives;
     private boolean hasTheKey = false;
 
-    public Player ( double startX, double startY, int lives) {
+    private boolean immune = false;
+    private Group shieldViewGroup = null;
+    private PauseTransition immuneTimer;
+    private Group cameraGroup;
+
+    public Player (double startX, double startY, int lives, Group cameraGroup) {
         this.positionX = startX;
         this.positionY = startY;
 
@@ -40,10 +54,11 @@ public class Player {
         this.startDirY = this.directionY;
 
         this.currLife = lives - 1;
+        this.cameraGroup = cameraGroup;
     }
 
-    public Player ( double startX, double startY, List<LifeIndicator> lives) {
-        this(startX, startY, lives.size());
+    public Player ( double startX, double startY, List<LifeIndicator> lives, Group cameraGroup) {
+        this(startX, startY, lives.size(), cameraGroup);
         this.lives = List.copyOf(lives);
     }
 
@@ -170,5 +185,69 @@ public class Player {
         double dy = playerY - closestY;
 
         return dx * dx + dy * dy <= getRadius() * getRadius();
+    }
+
+    public void makeImmune(double immunityDuration) {
+        immune = true;
+        if (shieldViewGroup == null) {
+            createShield();
+            immuneTimer = new PauseTransition(Duration.seconds(immunityDuration));
+            immuneTimer.setOnFinished(event -> {
+                immune = false;
+                shieldViewGroup.setVisible(false);
+            });
+        }
+        shieldViewGroup.setVisible(true);
+        immuneTimer.playFromStart();
+    }
+
+    private void createShield() {
+        shieldViewGroup = new Group();
+        Group root = (Group) cameraGroup.getScene().getRoot();
+        root.getChildren().add(shieldViewGroup);
+
+        Region shieldView = new Region();
+        shieldView.setPrefSize(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
+        shieldView.setMouseTransparent(true);
+        shieldView.setBackground(Constants.SHIELD_VIEW);
+
+        Region shieldFlash = new Region();
+        shieldFlash.setMouseTransparent(true);
+        shieldFlash.setBackground(Constants.SHIELD_FLASH);
+        shieldFlash.setPrefWidth(250);
+        shieldFlash.setPrefSize(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
+        root.getChildren().add(shieldFlash);
+        shieldFlash.toFront();
+        TranslateTransition flashAnimation =
+                new TranslateTransition(Duration.seconds(0.65), shieldFlash);
+
+        flashAnimation.setFromX(-250);
+        flashAnimation.setToX(Constants.SCREEN_WIDTH + 250);
+
+        PauseTransition pause =
+                new PauseTransition(Duration.seconds(1.2));
+
+        SequentialTransition flashLoop =
+                new SequentialTransition(
+                        flashAnimation,
+                        pause
+                );
+
+        flashLoop.setCycleCount(Animation.INDEFINITE);
+        flashLoop.play();
+
+        shieldViewGroup.getChildren().addAll(shieldView, shieldFlash);
+    }
+
+    public boolean overlapsCircle(double radius, double positionX, double positionZ) {
+        double centersD = java.awt.geom.Point2D.distance(
+                positionX, positionZ,
+                getPositionWorldX(), getPositionWorldY()
+        );
+        return centersD <= radius + getRadius();
+    }
+
+    public boolean getImmune() {
+        return immune;
     }
 }

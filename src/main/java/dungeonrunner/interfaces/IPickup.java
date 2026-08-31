@@ -21,5 +21,4 @@ public interface IPickup {
     static void removePickup(IPickup pickup) { pickups.remove(pickup); }
 
     boolean touchesPlayer(Player player);
-
 }

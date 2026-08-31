@@ -1,8 +1,10 @@
 package dungeonrunner.constants;
 
-import javafx.scene.paint.Color;
-
-import java.util.List;
+import javafx.geometry.Insets;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.*;
 
 public class Constants {
     public static final int EMPTY = 0;
@@ -18,6 +20,9 @@ public class Constants {
 
     public static final int SCREEN_WIDTH  = 800;
     public static final int SCREEN_HEIGHT = 600;
+
+    public static final double LIFE_BOOSTER_FREQUENCY = 10;
+    public static final double SHIELD_FREQUENCY = 15;
 
     public static final double CELL_SIZE      = 2.0;  
     public static final double WALL_HEIGHT    = 2.0;  
@@ -78,10 +83,55 @@ public class Constants {
     public static final double PLAYER_RADIUS         = 0.25;
     public static final int PLAYER_LIVES         = 3;
 
-    public static final double LIFE_BOOSTER_SIZE = CELL_SIZE / 4.0;
+    public static final double LIFE_BOOSTER_SIZE = CELL_SIZE / 5.0;
     public static final Color LIFE_BOOSTER_DIFFUSE = Color.color(0.55, 0.04, 0.12);
     public static final Color LIFE_BOOSTER_SPECULAR = Color.color(0.95, 0.40, 0.45);
     public static final double LIFE_BOOSTER_DURATION = 5;
-    public static final double LIFE_BOOSTER_ROTATION = 3;
+    public static final double LIFE_BOOSTER_ROTATION_TIME = 3;
+
+    public static final double SHIELD_RADIUS = CELL_SIZE / 8.0;
+    public static final Color SHIELD_DIFFUSE = Color.color(0.12, 0.45, 0.95, 0.25);
+    public static final Color SHIELD_SPECULAR = Color.color(0.75, 0.92, 1.00);
+    public static final double SHIELD_DURATION = 5;
+    public static final double IMMUNITY_DURATION = 10;
+    public static final double SHIELD_ROTATION_TIME = 3;
+
+    public static final Background SHIELD_VIEW = new Background(
+            new BackgroundFill(
+                    new RadialGradient(
+                            0,
+                            0,
+                            0.5,
+                            0.5,
+                            0.75,
+                            true,
+                            CycleMethod.NO_CYCLE,
+                            new Stop(0.45, Color.rgb(40, 120, 255, 0.00)),
+                            new Stop(0.65, Color.rgb(40, 130, 255, 0.10)),
+                            new Stop(0.85, Color.rgb(60, 150, 255, 0.25)),
+                            new Stop(1.00, Color.rgb(100, 190, 255, 0.42))
+                    ),
+                    CornerRadii.EMPTY,
+                    Insets.EMPTY
+            )
+    );
+
+    public static final Background SHIELD_FLASH = new Background(
+            new BackgroundFill(
+                    new LinearGradient(
+                            0, 0,
+                            1, 0,
+                            true,
+                            CycleMethod.NO_CYCLE,
+                            new Stop(0.0, Color.TRANSPARENT),
+                            new Stop(0.35, Color.TRANSPARENT),
+                            new Stop(0.50, Color.rgb(160, 220, 255, 0.25)),
+                            new Stop(0.65, Color.TRANSPARENT),
+                            new Stop(1.0, Color.TRANSPARENT)
+                    ),
+                    CornerRadii.EMPTY,
+                    Insets.EMPTY
+            )
+    );
 
 }

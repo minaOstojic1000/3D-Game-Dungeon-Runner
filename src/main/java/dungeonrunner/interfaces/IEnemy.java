@@ -10,6 +10,8 @@ public interface IEnemy extends IPickup{
     List<IEnemy> enemies = new ArrayList<>();
 
     default void affect(Player player) {
+        if (player.getImmune())
+            return;
         player.takeDamageDefault(1);
     }
 
