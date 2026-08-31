@@ -1,20 +1,21 @@
 package dungeonrunner;
 
 import dungeonrunner.constants.Constants;
+import dungeonrunner.constants.Maps;
 import dungeonrunner.constants.Enums;
 import dungeonrunner.constants.PaneConstants;
-import dungeonrunner.figures.CircularSaw;
-import dungeonrunner.figures.Key;
-import dungeonrunner.figures.Octahedron;
-import dungeonrunner.figures.Thorns;
+import dungeonrunner.figures.*;
 import dungeonrunner.infoPanes.AdditionalInformation;
 import dungeonrunner.infoPanes.EndOfGame;
 import dungeonrunner.infoPanes.Game2DPerspective;
+import dungeonrunner.infoPanes.MapChoice;
 import dungeonrunner.interfaces.IPickup;
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
@@ -28,7 +29,7 @@ import javafx.util.Duration;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Timer;
+import java.util.Random;
 
 public class GameGenerator {
 
@@ -42,22 +43,36 @@ public class GameGenerator {
     private final SubScene scene;
     private Box exit;
     private boolean exitUnlocked = false;
+    private int selectedMap = 0;
+    private Game2DPerspective littleMap;
+    private MapChoice mapChoice;
+    private AdditionalInformation info;
+    private StackPane gameInfo;
+    private EndOfGame endOfGame;
 
     public GameGenerator(SubScene worldScene) {
         this.world = (Group)worldScene.getRoot();
         this.scene = worldScene;
     }
 
-    public void generateGame() {
-        buildDungeon();
+    public void generateGame(MapChoice mapChoice, AdditionalInformation info, StackPane gameInfo, EndOfGame endOfGame) {
+        this.mapChoice = mapChoice;
+        this.info = info;
+        this.gameInfo = gameInfo;
+        this.endOfGame = endOfGame;
+
         createPlayer();
         setUpLighting();
         setUpCamera();
+        mapChoice.addAction(this::startGame);
+        mapChoice.show();
     }
 
-    public void startGame(AdditionalInformation info, Game2DPerspective littleMap, EndOfGame endOfGame) {
+    public void startGame() {
+        buildDungeon();
+        buildLittleMap(gameInfo);
         player.setUpLives(info.getLives());
-        setUpGameTimer(info, littleMap, endOfGame);
+        setUpGameTimer(info, endOfGame);
         timer.start();
         info.show();
         littleMap.show();
@@ -80,7 +95,7 @@ public class GameGenerator {
 
         PhongMaterial ceilingMaterial = buildMaterial(Constants.CEILING_DIFFUSE_COLOR, Constants.CEILING_SPECULAR_COLOR);
 
-        this.map = new DungeonMap ( Constants.MAP );
+        this.map = new DungeonMap(mapChoice.getMap());
 
         int    rows       = this.map.getRows ( );
         int    columns    = this.map.getCols ( );
@@ -122,6 +137,15 @@ public class GameGenerator {
                 }
             }
         }
+    }
+
+    private void buildLittleMap(StackPane gameInfo) {
+        this.littleMap = new Game2DPerspective(
+                PaneConstants.PERSP_2D_WIDTH, 0, 0,
+                map, player
+        );
+        gameInfo.getChildren().add(littleMap);
+        gameInfo.setAlignment(littleMap, Pos.BOTTOM_RIGHT);
     }
 
     private void addWall(int tile, double positionX, double positionY, double positionZ, Material wallMaterial) {
@@ -243,16 +267,37 @@ public class GameGenerator {
         this.player = new Player(Constants.PLAYER_START_X, Constants.PLAYER_START_Y, Constants.PLAYER_LIVES);
     }
 
-    private void setUpGameTimer(AdditionalInformation info, Game2DPerspective littleMap, EndOfGame endOfGame) {
+    private void setUpGameTimer(AdditionalInformation info, EndOfGame endOfGame) {
         List<IPickup> pickups = IPickup.getPickups();
+        Random random = new Random();
+        final int numMoments = 10;
+        final double[] nextHeartMoments = new double[numMoments];
+        final double[] nextShieldMoments = new double[numMoments];
+        for (int i = 0; i < numMoments; i++) {
+            nextHeartMoments[i] = random.nextDouble(10);
+            nextShieldMoments[i] = random.nextDouble(30);
+        }
 
-        this.timer = new AnimationTimer( ) {
+        this.timer = new AnimationTimer() {
+            private double last;
+            private double timeSlices = 0;
+            private int currMomentH = 0, currMomentS;
+            private double momentsSumH = 0, momentsSumS = 0;
             @Override
-            public void handle ( long now ) {
-                player.update ( map );
+            public void handle(long now) {
+                if ( this.last == 0 ) {
+                    this.last = now;
+                }
+                double dt = (now - this.last) / 10e8;
+                this.last = now;
 
-                updateCameraMount ( );
-                updateTorch ( );
+                timeSlices += dt;
+                generateHearts(dt);
+
+                player.update(map);
+
+                updateCameraMount();
+                updateTorch();
                 info.updateAll(now);
                 littleMap.update();
                 Key.clean();
@@ -276,7 +321,26 @@ public class GameGenerator {
                     }
                 }
 
+                LifeBooster.cleanExpired();
                 updateExit();
+            }
+            private void generateHearts(double dt) {
+
+                while ((timeSlices - momentsSumH) >= nextHeartMoments[currMomentH]) {
+
+                    momentsSumH += nextHeartMoments[currMomentH];
+                    currMomentH = (currMomentH + 1) % numMoments;
+
+                    LifeBooster life = LifeBooster.generateRandomLifeBooster(
+                            map,
+                            Constants.LIFE_BOOSTER_SIZE,
+                            Constants.LIFE_BOOSTER_DIFFUSE,
+                            Constants.LIFE_BOOSTER_SPECULAR,
+                            Constants.LIFE_BOOSTER_DURATION,
+                            Constants.LIFE_BOOSTER_ROTATION
+                    );
+                    world.getChildren().add(life);
+                }
             }
         };
     }

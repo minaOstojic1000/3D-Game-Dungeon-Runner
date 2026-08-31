@@ -10,6 +10,7 @@ import dungeonrunner.figures.Thorns;
 import dungeonrunner.infoPanes.AdditionalInformation;
 import dungeonrunner.infoPanes.EndOfGame;
 import dungeonrunner.infoPanes.Game2DPerspective;
+import dungeonrunner.infoPanes.MapChoice;
 import dungeonrunner.interfaces.IPickup;
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
@@ -36,6 +37,7 @@ import java.util.Objects;
 public class DungeonRunner extends Application {
 
     private GameGenerator generator;
+    private StackPane gameInfo;
 
     private void setUpInput(Scene scene) {
         if (generator == null) return;
@@ -103,17 +105,14 @@ public class DungeonRunner extends Application {
 
         root.getChildren().add(worldScene);
 
-        this.generator = new GameGenerator(worldScene);
-        generator.generateGame();
-
-        setUpInput(mainScene);
+        MapChoice mapChoice = new MapChoice(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT, 0, 0);
 
         EndOfGame endOfGame = new EndOfGame(
                 Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT, 0, 0
         );
         root.getChildren().add(endOfGame);
 
-        StackPane gameInfo = new StackPane();
+        gameInfo = new StackPane();
         gameInfo.setPrefSize(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
         root.getChildren().add(gameInfo);
 
@@ -124,15 +123,12 @@ public class DungeonRunner extends Application {
         gameInfo.getChildren().add(hudInfo);
         gameInfo.setAlignment(hudInfo, Pos.TOP_CENTER);
 
-        Game2DPerspective littleMap = new Game2DPerspective(
-                PaneConstants.PERSP_2D_WIDTH, 0, 0,
-                generator.getMap(), generator.getPlayer()
-        );
+        this.generator = new GameGenerator(worldScene);
+        generator.generateGame(mapChoice, hudInfo, gameInfo, endOfGame);
 
-        gameInfo.getChildren().add(littleMap);
-        gameInfo.setAlignment(littleMap, Pos.BOTTOM_RIGHT);
+        setUpInput(mainScene);
 
-        generator.startGame(hudInfo, littleMap, endOfGame);
+        root.getChildren().add(mapChoice); // has to be last because of mouse focus!!!
 
         stage.setTitle("Escape dungeon");
         stage.setScene(mainScene);

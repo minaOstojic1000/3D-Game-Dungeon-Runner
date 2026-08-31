@@ -16,17 +16,6 @@ public class Constants {
     public static final int THORNS  = 8;
     public static final int KEY  = 9;
 
-    public static final int[][] MAP = {
-            {1,1,1,1,1,1,1,1,1},
-            {1,0,0,9,1,0,0,0,1},
-            {1,0,8,0,0,0,1,0,1},
-            {1,0,3,1,5,0,4,0,1},
-            {1,0,0,0,0,0,0,0,1},
-            {1,3,1,0,7,1,0,1,1},
-            {1,0,0,0,0,0,0,2,1},
-            {1,1,1,1,6,1,1,1,1},
-    };
-
     public static final int SCREEN_WIDTH  = 800;
     public static final int SCREEN_HEIGHT = 600;
 
@@ -88,4 +77,11 @@ public class Constants {
     public static final double PLAYER_ROTATION_SPEED = 0.05;
     public static final double PLAYER_RADIUS         = 0.25;
     public static final int PLAYER_LIVES         = 3;
+
+    public static final double LIFE_BOOSTER_SIZE = CELL_SIZE / 4.0;
+    public static final Color LIFE_BOOSTER_DIFFUSE = Color.color(0.55, 0.04, 0.12);
+    public static final Color LIFE_BOOSTER_SPECULAR = Color.color(0.95, 0.40, 0.45);
+    public static final double LIFE_BOOSTER_DURATION = 5;
+    public static final double LIFE_BOOSTER_ROTATION = 3;
+
 }

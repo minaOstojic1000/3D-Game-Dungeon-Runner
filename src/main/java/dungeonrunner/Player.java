@@ -141,7 +141,15 @@ public class Player {
                 return;
             lives.get(currLife).loseColor();
             currLife--;
-            System.out.println("damaged!");
+        }
+    }
+
+    public void addLives(int numOfLives) {
+        for (int i = 0; i < numOfLives; i++) {
+            if (currLife == lives.size() - 1)
+                return;
+            currLife++;
+            lives.get(currLife).getColored();
         }
     }
 

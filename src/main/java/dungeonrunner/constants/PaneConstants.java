@@ -49,4 +49,25 @@ public class PaneConstants {
     public static final Color PERSP_2D_KEY_FILL = Constants.KEY_DIFFUSE_COLOR;
     public static final Color PERSP_2D_KEY_STROKE = Color.color(0.07, 0.09, 0.15);
 
+    public static final DropShadow HIGHLIGHT_MAP_IMG_SHADOW = Glows.CYAN_GLOW;
+    public static final DropShadow DEFAULT_MAP_IMG_SHADOW = Glows.DEFAULT_SHADOW;
+    public static final DropShadow SELECTED_MAP_IMG_SHADOW = Glows.AMBER_GLOW;
+
+    public static final String MAP_CHOICE_TITLE = "SELECT GAME MAP";
+    public static final Color MAP_CHOICE_TITLE_COLOR = Color.WHITE;
+    public static final Font MAP_CHOICE_TITLE_FONT = Font.font("Impact", FontWeight.BOLD, FontPosture.REGULAR, 36);
+
+    public static final String MAP_CHOICE_CONFIRM_BUTTON_TEXT = "START PLAYING";
+    public static final Color MAP_CHOICE_CONFIRM_BUTTON_COLOR = Color.color(0.12, 0.53, 0.38);
+    public static final Color MAP_CHOICE_CONFIRM_BUTTON_TEXT_COLOR = Color.WHITE;
+    public static final Font MAP_CHOICE_CONFIRM_BUTTON_FONT = Font.font("Impact", FontWeight.BOLD, 18);
+    public static final Color MAP_CHOICE_CONFIRM_BUTTON_STROKE = Color.color(0.08, 0.40, 0.28);
+    public static final DropShadow MAP_CHOICE_CONFIRM_BUTTON_HIGHLIGHT = Glows.CYAN_GLOW;
+    public static final DropShadow MAP_CHOICE_CONFIRM_BUTTON_SHADOW = Glows.DEFAULT_SHADOW;
+
+    public static final Color DEFAULT_TITLE_COLOR = Color.WHITE;
+    public static final Font DEFAULT_TITLE_FONT = Font.font("Impact", FontWeight.BOLD, FontPosture.REGULAR, 36);
+
+    public static final Background MAP_CHOICE_BACKGROUND = new Background(new BackgroundFill(Color.color(0.04, 0.31, 0.22), null, null));
+
 }
