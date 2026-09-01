@@ -1,10 +1,13 @@
 package dungeonrunner.constants;
 
 import javafx.geometry.Insets;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.*;
+
+import java.util.Objects;
 
 public class Constants {
     public static final int EMPTY = 0;
@@ -23,6 +26,7 @@ public class Constants {
     public static final int DOORS_CONTROL_D  = 13;
     public static final int DOORS_CONTROL_R  = 14;
     public static final int DOORS_CONTROL_L  = 15;
+    public static final int GUARD  = 16;
 
     public static final int SCREEN_WIDTH  = 800;
     public static final int SCREEN_HEIGHT = 600;
@@ -163,4 +167,16 @@ public class Constants {
     public static final Color DOORS_CONTROL_LIGHT_DIFFUSE = Color.color(0.35, 0.32, 0.30);
     public static final Color DOORS_CONTROL_SPECULAR = Color.color(0.70, 0.70, 0.75);
 
+    public static final double GUARD_WIDTH = CELL_SIZE * 0.3;
+    public static final double GUARD_HEIGHT = WALL_HEIGHT * 0.8;
+    public static final double GUARD_SPEED = 1;
+
+    public static final Image GUARD_IMAGE_HEAD =
+            new Image(Objects.requireNonNull(Maps.class.getResourceAsStream("/dungeonrunner/guard/head.png")));
+    public static final Image GUARD_IMAGE_BODY =
+            new Image(Objects.requireNonNull(Maps.class.getResourceAsStream("/dungeonrunner/guard/body.png")));
+    public static final Image GUARD_IMAGE_ARM =
+            new Image(Objects.requireNonNull(Maps.class.getResourceAsStream("/dungeonrunner/guard/arm.png")));
+    public static final Image GUARD_IMAGE_LEGS =
+            new Image(Objects.requireNonNull(Maps.class.getResourceAsStream("/dungeonrunner/guard/legs.png")));
 }

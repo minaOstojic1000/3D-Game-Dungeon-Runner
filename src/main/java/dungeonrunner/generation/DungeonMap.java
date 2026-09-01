@@ -34,7 +34,8 @@ public class DungeonMap {
         canStep = new ArrayList<>(Arrays.asList(
                 Constants.EMPTY,
                 Constants.THORNS,
-                Constants.KEY
+                Constants.KEY,
+                Constants.GUARD
         ));
 
         canStep.addAll(doorsTiles);

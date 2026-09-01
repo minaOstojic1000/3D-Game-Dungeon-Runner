@@ -146,8 +146,8 @@ public class GameGenerator {
 
         this.map = new DungeonMap(mapChoice.getMap());
 
-        int    rows       = this.map.getRows ( );
-        int    columns    = this.map.getCols ( );
+        int    rows       = this.map.getRows();
+        int    columns    = this.map.getCols();
         double totalWidth = columns * Constants.CELL_SIZE;
         double totalDepth = rows * Constants.CELL_SIZE;
 
@@ -159,7 +159,7 @@ public class GameGenerator {
         for(int row = 0; row < rows; row++) {
             for ( int column = 0; column < columns; column++ ) {
 
-                int tile = this.map.get ( column, row );
+                int tile = this.map.get(column, row);
 
                 double positionX = column * Constants.CELL_SIZE + Constants.CELL_SIZE / 2.0;
                 double positionY = 0;
@@ -206,12 +206,69 @@ public class GameGenerator {
                     doorsList.add(new DoorsPositions(row, column, doors));
                     map.addDoorsFigure(row, column, doors);
                 }
+                else if (tile == Constants.GUARD) {
+                    addGuard(row, column, positionX, positionY, positionZ);
+                }
             }
         }
 
         if (doorsList.size() != ctrlList.size()) return;
 
         pairDoorsAndCtrls(ctrlList, doorsList);
+    }
+
+    private void addGuard(int row, int col, double positionX, double positionY, double positionZ) {
+        double xDistance = getGuardXDistance(row, col, Constants.GUARD);
+        double zDistance = getGuardZDistance(row, col, Constants.GUARD);
+        if (xDistance < 0 || zDistance < 0)
+            return;
+        Enums.AXIS axis = Enums.AXIS.X;
+        double distance = xDistance;
+        Enums.DIRECTION direction = Enums.DIRECTION.RIGHT;
+        if (zDistance > xDistance) {
+            axis = Enums.AXIS.Z;
+            distance = zDistance;
+            //direction = Enums.DIRECTION.LEFT;
+        }
+
+        Guard guard = new Guard(
+                Constants.GUARD_WIDTH,
+                Constants.GUARD_HEIGHT,
+                positionX,
+                positionY,
+                positionZ,
+                axis,
+                direction,
+                Constants.GUARD_SPEED,
+                distance
+        );
+        this.world.getChildren().add(guard);
+    }
+
+    private double getGuardXDistance(int row, int column, int val) {
+        if (column > 0 && map.get(column - 1, row) == val)
+            return -1;
+        double distance = 0;
+        int tCol = column + 1;
+        int maxCols = map.getCols();
+        while (tCol < maxCols && map.get(tCol, row) == val) {
+            distance += Constants.CELL_SIZE;
+            tCol++;
+        }
+        return distance;
+    }
+
+    private double getGuardZDistance(int row, int column, int val) {
+        if (row > 0 && map.get(column, row - 1) == val)
+            return -1;
+        double distance = 0;
+        int tRow = row + 1;
+        int maxRows = map.getRows();
+        while (tRow < maxRows && map.get(column, tRow) == val) {
+            distance += Constants.CELL_SIZE;
+            tRow++;
+        }
+        return distance;
     }
 
     private void pairDoorsAndCtrls(List<CtrlPositions> ctrlList, List<DoorsPositions> doorsList) {
