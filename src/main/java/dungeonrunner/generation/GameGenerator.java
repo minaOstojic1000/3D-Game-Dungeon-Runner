@@ -434,7 +434,7 @@ public class GameGenerator {
                 this.last = now;
 
                 timeSlices += dt;
-                //itemsGenerator.generateItems(timeSlices);
+                itemsGenerator.generateItems(timeSlices);
 
                 player.update(map);
 
