@@ -17,6 +17,12 @@ public class Constants {
     public static final int SAW_ZR = 7;
     public static final int THORNS  = 8;
     public static final int KEY  = 9;
+    public static final int DOORS_X  = 10;
+    public static final int DOORS_Z  = 11;
+    public static final int DOORS_CONTROL_U  = 12;
+    public static final int DOORS_CONTROL_D  = 13;
+    public static final int DOORS_CONTROL_R  = 14;
+    public static final int DOORS_CONTROL_L  = 15;
 
     public static final int SCREEN_WIDTH  = 800;
     public static final int SCREEN_HEIGHT = 600;
@@ -142,5 +148,19 @@ public class Constants {
     public static final double POTION_DURATION = 10;
     public static final double POTION_EFFECT_DURATION = 10;
     public static final double POTION_ROTATION_TIME = 3;
+
+    public static final double DOORS_WIDTH = CELL_SIZE;
+    public static final double DOORS_HEIGHT = WALL_HEIGHT;
+    public static final double DOORS_DEPTH = CELL_SIZE * 0.8;
+    public static final Color DOORS_DIFFUSE_COLOR = Color.color(0.42, 0.26, 0.15);
+    public static final Color DOORS_SPECULAR_COLOR = Color.color(0.55, 0.45, 0.38);
+    public static final double DOORS_OPENING_TIME = 3;
+
+    public static final double DOORS_CONTROL_WIDTH = CELL_SIZE * 0.1;
+    public static final double DOORS_CONTROL_HEIGHT = WALL_HEIGHT * 0.2;
+    public static final double DOORS_CONTROL_DEPTH = CELL_SIZE * 0.15;
+    public static final Color DOORS_CONTROL_DARK_DIFFUSE = Color.color(0.18, 0.18, 0.20);
+    public static final Color DOORS_CONTROL_LIGHT_DIFFUSE = Color.color(0.35, 0.32, 0.30);
+    public static final Color DOORS_CONTROL_SPECULAR = Color.color(0.70, 0.70, 0.75);
 
 }

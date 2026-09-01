@@ -1,7 +1,7 @@
 package dungeonrunner;
 
 import dungeonrunner.constants.Constants;
-import dungeonrunner.creation.DungeonMap;
+import dungeonrunner.generation.DungeonMap;
 import dungeonrunner.figures.LifeIndicator;
 import javafx.animation.*;
 import javafx.geometry.Point2D;
@@ -38,6 +38,8 @@ public class Player {
 
     private boolean directionSwitched = false;
     private PauseTransition switchDirectionTimer;
+
+    private double moveSpeed = Constants.PLAYER_MOVE_SPEED;
 
     public Player (double startX, double startY, int lives, Group cameraGroup) {
         this.positionX = startX;
@@ -108,8 +110,8 @@ public class Player {
 
     public void update ( DungeonMap map ) {
         if ( this.moveForward ) {
-            double newX = this.positionX + this.directionX * Constants.PLAYER_MOVE_SPEED;
-            double newY = this.positionY + this.directionY * Constants.PLAYER_MOVE_SPEED;
+            double newX = this.positionX + this.directionX * moveSpeed;
+            double newY = this.positionY + this.directionY * moveSpeed;
 
             if ( canMoveTo ( newX, positionY, map ) ) {
                 this.positionX = newX;
@@ -121,8 +123,8 @@ public class Player {
         }
 
         if ( this.moveBackward ) {
-            double newX = this.positionX - this.directionX * Constants.PLAYER_MOVE_SPEED;
-            double newY = this.positionY - this.directionY * Constants.PLAYER_MOVE_SPEED;
+            double newX = this.positionX - this.directionX * moveSpeed;
+            double newY = this.positionY - this.directionY * moveSpeed;
 
             if ( canMoveTo ( newX, positionY, map ) ) {
                 this.positionX = newX;
@@ -152,8 +154,7 @@ public class Player {
     }
 
     private boolean isFree ( int x, int y, DungeonMap map ) {
-        int tile = map.get(x, y);
-        return map.getCanStep().contains(tile);
+        return map.canStep(x, y);
     }
 
     private void rotate ( double angle ) {
@@ -289,5 +290,17 @@ public class Player {
 
         directionSwitched = true;
         switchDirectionTimer.playFromStart();
+    }
+
+    public void setMoveSpeed(double moveSpeed) {
+        this.moveSpeed = moveSpeed;
+    }
+
+    public double getMoveSpeed() {
+        return moveSpeed;
+    }
+
+    public void resetMoveSpeed() {
+        setMoveSpeed(Constants.PLAYER_MOVE_SPEED);
     }
 }

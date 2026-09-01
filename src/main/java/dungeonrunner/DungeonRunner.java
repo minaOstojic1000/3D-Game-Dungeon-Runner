@@ -2,7 +2,7 @@ package dungeonrunner;
 
 import dungeonrunner.constants.Constants;
 import dungeonrunner.constants.PaneConstants;
-import dungeonrunner.creation.GameGenerator;
+import dungeonrunner.generation.GameGenerator;
 import dungeonrunner.infoPanes.AdditionalInformation;
 import dungeonrunner.infoPanes.EndOfGame;
 import dungeonrunner.infoPanes.MapChoice;

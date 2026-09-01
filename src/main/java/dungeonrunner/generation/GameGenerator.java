@@ -1,8 +1,9 @@
-package dungeonrunner.creation;
+package dungeonrunner.generation;
 
 import dungeonrunner.Player;
 import dungeonrunner.constants.Constants;
 import dungeonrunner.constants.Enums;
+import dungeonrunner.constants.Maps;
 import dungeonrunner.constants.PaneConstants;
 import dungeonrunner.figures.*;
 import dungeonrunner.infoPanes.AdditionalInformation;
@@ -24,9 +25,11 @@ import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
+import javafx.util.Pair;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 public class GameGenerator {
 
@@ -45,6 +48,52 @@ public class GameGenerator {
     private AdditionalInformation info;
     private StackPane gameInfo;
     private EndOfGame endOfGame;
+
+    private class CtrlPositions {
+        private int row, col;
+        private DoorsControlSwitch ctrl;
+
+        CtrlPositions(int row, int col, DoorsControlSwitch ctrl) {
+            this.ctrl = ctrl;
+            this.row = row;
+            this.col = col;
+        }
+
+        public int getRow() {
+            return row;
+        }
+
+        public int getCol() {
+            return col;
+        }
+
+        public DoorsControlSwitch getCtrl() {
+            return ctrl;
+        }
+    }
+
+    private class DoorsPositions {
+        private int row, col;
+        private Doors doors;
+
+        DoorsPositions(int row, int col, Doors doors) {
+            this.doors = doors;
+            this.row = row;
+            this.col = col;
+        }
+
+        public int getRow() {
+            return row;
+        }
+
+        public int getCol() {
+            return col;
+        }
+
+        public Doors getDoors() {
+            return doors;
+        }
+    }
 
     public GameGenerator(SubScene worldScene) {
         this.world = (Group)worldScene.getRoot();
@@ -91,6 +140,10 @@ public class GameGenerator {
 
         PhongMaterial ceilingMaterial = buildMaterial(Constants.CEILING_DIFFUSE_COLOR, Constants.CEILING_SPECULAR_COLOR);
 
+        PhongMaterial doorsMaterial = buildMaterial(Constants.DOORS_DIFFUSE_COLOR, Constants.DOORS_SPECULAR_COLOR);
+
+        PhongMaterial doorsControlMaterial = buildMaterial(Constants.DOORS_CONTROL_LIGHT_DIFFUSE, Constants.DOORS_CONTROL_SPECULAR);
+
         this.map = new DungeonMap(mapChoice.getMap());
 
         int    rows       = this.map.getRows ( );
@@ -100,7 +153,10 @@ public class GameGenerator {
 
         buildFloorAndCeiling(totalWidth, totalDepth, floorMaterial, ceilingMaterial);
 
-        for ( int row = 0; row < rows; row++ ) {
+        List<CtrlPositions> ctrlList = new ArrayList<>();
+        List<DoorsPositions> doorsList = new ArrayList<>();
+
+        for(int row = 0; row < rows; row++) {
             for ( int column = 0; column < columns; column++ ) {
 
                 int tile = this.map.get ( column, row );
@@ -110,10 +166,10 @@ public class GameGenerator {
                 double positionZ = row * Constants.CELL_SIZE + Constants.CELL_SIZE / 2.0;
 
                 if ( tile == Constants.WALL || tile == Constants.EXIT ||
-                        tile == Constants.SAW_XL ||
-                        tile == Constants.SAW_XR ||
-                        tile == Constants.SAW_ZL ||
-                        tile == Constants.SAW_ZR) {
+                        tile == Constants.SAW_XL || tile == Constants.SAW_XR ||
+                        tile == Constants.SAW_ZL || tile == Constants.SAW_ZR ||
+                        tile == Constants.DOORS_CONTROL_D || tile == Constants.DOORS_CONTROL_U ||
+                        tile == Constants.DOORS_CONTROL_R || tile == Constants.DOORS_CONTROL_L) {
 
                     addWall(tile, positionX, positionY, positionZ, wallMaterial);
 
@@ -121,6 +177,16 @@ public class GameGenerator {
                             tile == Constants.SAW_ZL || tile == Constants.SAW_ZR)
                         addSaw(tile, positionX, positionY, positionZ, sawMaterial);
 
+                    else if(tile == Constants.DOORS_CONTROL_D ||
+                            tile == Constants.DOORS_CONTROL_U ||
+                            tile == Constants.DOORS_CONTROL_R ||
+                            tile == Constants.DOORS_CONTROL_L) {
+                        DoorsControlSwitch ctrl = addDoorsControl(
+                                tile,
+                                positionX, positionY, positionZ,
+                                doorsControlMaterial);
+                        ctrlList.add(new CtrlPositions(row, column, ctrl));
+                    }
                 }
                 else if (tile == Constants.OCTA) {
                     addOcta(positionX, positionY, positionZ, wallMaterial);
@@ -130,6 +196,37 @@ public class GameGenerator {
                 }
                 else if (tile == Constants.KEY) {
                     addKey(positionX, positionY, positionZ, keyMaterial);
+                }
+                else if (tile == Constants.DOORS_X || tile == Constants.DOORS_Z) {
+                    Doors doors = addDoors(
+                            tile,
+                            positionX, positionY, positionZ,
+                            doorsMaterial
+                    );
+                    doorsList.add(new DoorsPositions(row, column, doors));
+                    map.addDoorsFigure(row, column, doors);
+                }
+            }
+        }
+
+        if (doorsList.size() != ctrlList.size()) return;
+
+        pairDoorsAndCtrls(ctrlList, doorsList);
+    }
+
+    private void pairDoorsAndCtrls(List<CtrlPositions> ctrlList, List<DoorsPositions> doorsList) {
+
+        for (CtrlPositions ctrlPart : ctrlList) {
+            Pair<Integer, Integer> wantedDoor = Maps.controlsDoorsPairs.get(
+                    new Pair<>(ctrlPart.getRow(), ctrlPart.getCol())
+            );
+
+            for (DoorsPositions doorsP : doorsList) {
+                if (doorsP.getRow() == wantedDoor.getKey() &&
+                        doorsP.getCol() == wantedDoor.getValue()) {
+                    ctrlPart.getCtrl().setMyDoors(doorsP.getDoors());
+
+                    break;
                 }
             }
         }
@@ -142,6 +239,43 @@ public class GameGenerator {
         );
         gameInfo.getChildren().add(littleMap);
         gameInfo.setAlignment(littleMap, Pos.BOTTOM_RIGHT);
+    }
+
+    private DoorsControlSwitch addDoorsControl(int tile, double positionX, double positionY, double positionZ, PhongMaterial controlMaterial) {
+
+        double w = 0, d = 0;
+        double dispX = 0, dispZ = 0;
+        if (tile == Constants.DOORS_CONTROL_D || tile == Constants.DOORS_CONTROL_U) {
+            w = Constants.DOORS_CONTROL_WIDTH;
+            d = Constants.DOORS_CONTROL_DEPTH;
+
+            if (tile == Constants.DOORS_CONTROL_U)
+                dispZ -= Constants.CELL_SIZE / 2. + d / 2.;
+            else
+                dispZ += Constants.CELL_SIZE / 2. + d / 2.;
+        }
+        else {
+            d = Constants.DOORS_CONTROL_WIDTH;
+            w = Constants.DOORS_CONTROL_DEPTH;
+
+            if (tile == Constants.DOORS_CONTROL_L)
+                dispX -= Constants.CELL_SIZE / 2. + w / 2.;
+            else
+                dispX += Constants.CELL_SIZE / 2. + w / 2.;
+        }
+
+        DoorsControlSwitch control = new DoorsControlSwitch(
+                w,
+                Constants.DOORS_CONTROL_HEIGHT,
+                d,
+                positionX + dispX,
+                positionY,
+                positionZ + dispZ,
+                controlMaterial
+        );
+        this.world.getChildren().add(control);
+
+        return control;
     }
 
     private void addWall(int tile, double positionX, double positionY, double positionZ, Material wallMaterial) {
@@ -219,6 +353,24 @@ public class GameGenerator {
         this.world.getChildren().add(saw);
     }
 
+    private Doors addDoors(int tile, double positonX, double positionY, double positionZ, Material doorsMaterial) {
+        Enums.AXIS openingAxis = (tile == Constants.DOORS_X) ? Enums.AXIS.X : Enums.AXIS.Z;
+        Doors doors = new Doors(
+                Constants.DOORS_HEIGHT,
+                Constants.DOORS_WIDTH,
+                Constants.DOORS_DEPTH,
+                positonX,
+                positionY,
+                positionZ,
+                openingAxis,
+                Constants.DOORS_OPENING_TIME,
+                doorsMaterial
+        );
+        this.world.getChildren().add(doors);
+
+        return doors;
+    }
+
     private void addKey(double positionX, double positionY, double positionZ, Material keyMaterial) {
         Key key = new Key(
                 Constants.KEY_HEIGHT,
@@ -282,7 +434,7 @@ public class GameGenerator {
                 this.last = now;
 
                 timeSlices += dt;
-                itemsGenerator.generateItems(timeSlices);
+                //itemsGenerator.generateItems(timeSlices);
 
                 player.update(map);
 
@@ -414,4 +566,5 @@ public class GameGenerator {
     }
 
     public DungeonMap getMap() { return map; }
+
 }

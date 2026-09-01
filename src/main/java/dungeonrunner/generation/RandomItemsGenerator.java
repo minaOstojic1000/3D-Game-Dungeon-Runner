@@ -1,4 +1,4 @@
-package dungeonrunner.creation;
+package dungeonrunner.generation;
 
 import dungeonrunner.constants.Constants;
 import dungeonrunner.figures.LifeBooster;

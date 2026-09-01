@@ -8,5 +8,5 @@ module org.example.dungeonrunner {
     exports dungeonrunner.constants;
     exports dungeonrunner.infoPanes;
     exports dungeonrunner.figures;
-    exports dungeonrunner.creation;
+    exports dungeonrunner.generation;
 }

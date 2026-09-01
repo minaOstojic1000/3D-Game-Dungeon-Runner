@@ -1,6 +1,6 @@
 package dungeonrunner.figures;
 
-import dungeonrunner.creation.DungeonMap;
+import dungeonrunner.generation.DungeonMap;
 import dungeonrunner.Player;
 import dungeonrunner.constants.Constants;
 import dungeonrunner.interfaces.IEnemy;
