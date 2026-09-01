@@ -9,7 +9,9 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.util.Pair;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 public class MapChoice extends ChoicePane {
@@ -33,11 +35,33 @@ public class MapChoice extends ChoicePane {
     }
 
     public int[][] getMap() {
+        if (selectedChoice < 0 || selectedChoice >= Maps.MAPS.size())
+            return null;
         return Maps.MAPS.get(selectedChoice);
     }
 
     public Image getMapBricks() {
+        if (selectedChoice < 0 || selectedChoice >= Maps.MAP_BRICKS_IMAGES.length)
+            return null;
         return Maps.MAP_BRICKS_IMAGES[selectedChoice];
+    }
+
+    public HashMap<Pair<Integer, Integer>, Pair<Integer, Integer>> getCtrlDoorsList() {
+        if (selectedChoice < 0 || selectedChoice >= Maps.CTRL_DOORS_PAIRS.size())
+            return null;
+        return Maps.CTRL_DOORS_PAIRS.get(selectedChoice);
+    }
+
+    public Pair<Double, Double> getPlayerStartPosition() {
+        if (selectedChoice < 0 || selectedChoice >= Maps.PLAYER_START_POSITION.size())
+            return null;
+        return Maps.PLAYER_START_POSITION.get(selectedChoice);
+    }
+
+    public Pair<Double, Double> getPlayerStartDirection() {
+        if (selectedChoice < 0 || selectedChoice >= Maps.PLAYER_START_DIRECTION.size())
+            return null;
+        return Maps.PLAYER_START_DIRECTION.get(selectedChoice);
     }
 
     @Override

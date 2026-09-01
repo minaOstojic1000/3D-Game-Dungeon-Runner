@@ -16,8 +16,8 @@ public class Constants {
     public static final int OCTA  = 3;
     public static final int SAW_XL = 4;
     public static final int SAW_XR = 5;
-    public static final int SAW_ZL = 6;
-    public static final int SAW_ZR = 7;
+    public static final int SAW_ZU = 6;
+    public static final int SAW_ZD = 7;
     public static final int THORNS  = 8;
     public static final int KEY  = 9;
     public static final int DOORS_X  = 10;
@@ -33,7 +33,7 @@ public class Constants {
 
     public static final double LIFE_BOOSTER_FREQUENCY = 10;
     public static final double SHIELD_FREQUENCY = 15;
-    public static final double POTION_FREQUENCY = 10;
+    public static final double POTION_FREQUENCY = 15;
 
     public static final double CELL_SIZE      = 2.0;  
     public static final double WALL_HEIGHT    = 2.0;  
@@ -87,8 +87,8 @@ public class Constants {
     public static final double CAMERA_FAR_CLIP      = 500.0;
     public static final double CAMERA_FIELD_OF_VIEW = 75.0;
 
-    public static final double PLAYER_START_X        = 1.5;
-    public static final double PLAYER_START_Y        = 1.5;
+    public static final double PLAYER_START_X_DEFAULT = 1.5;
+    public static final double PLAYER_START_Y_DEFAULT = 1.5;
     public static final double PLAYER_MOVE_SPEED     = 0.02;
     public static final double PLAYER_ROTATION_SPEED = 0.05;
     public static final double PLAYER_RADIUS         = 0.25;
@@ -159,6 +159,11 @@ public class Constants {
     public static final Color DOORS_DIFFUSE_COLOR = Color.color(0.42, 0.26, 0.15);
     public static final Color DOORS_SPECULAR_COLOR = Color.color(0.55, 0.45, 0.38);
     public static final double DOORS_OPENING_TIME = 3;
+    public static final Image DOOR_LEFT_IMG =
+            new Image(Objects.requireNonNull(Maps.class.getResourceAsStream("/dungeonrunner/doors/leftDoor.png")));
+    public static final Image DOOR_RIGHT_IMG =
+            new Image(Objects.requireNonNull(Maps.class.getResourceAsStream("/dungeonrunner/doors/rightDoor.png")));
+
 
     public static final double DOORS_CONTROL_WIDTH = CELL_SIZE * 0.1;
     public static final double DOORS_CONTROL_HEIGHT = WALL_HEIGHT * 0.2;

@@ -190,7 +190,8 @@ public class Potion extends Group implements IEnemy, IRotatingItem {
 
     @Override
     public void affect(Player player) {
-        player.switchDirection(effectDuration);
+        if (!player.getImmune())
+            player.switchDirection(effectDuration);
         this.setVisible(false);
         expiredPotions.add(this);
     }

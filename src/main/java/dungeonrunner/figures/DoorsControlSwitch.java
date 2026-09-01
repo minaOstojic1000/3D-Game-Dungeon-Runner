@@ -20,12 +20,14 @@ public class DoorsControlSwitch extends Box implements IPowerUp {
                               double positionX, double positionY, double positionZ,
                               PhongMaterial material) {
         super(width, height, depth);
-        this.material = material;
         this.surfaceRect = new Rectangle(width, depth);
         this.positionX = positionX;
         this.positionZ = positionZ;
 
-        this.setMaterial(material);
+        this.material = new PhongMaterial();
+        this.material.setDiffuseColor(material.getDiffuseColor());
+        this.material.setSpecularColor(material.getSpecularColor());
+        this.setMaterial(this.material);
 
         this.getTransforms().add(
                 new Translate(positionX, positionY, positionZ)

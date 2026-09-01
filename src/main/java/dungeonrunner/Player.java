@@ -22,10 +22,10 @@ public class Player {
     private boolean rotateLeft;
     private boolean rotateRight;
 
-    private final double startX;
-    private final double startY;
-    private final double startDirX;
-    private final double startDirY;
+    private double startX;
+    private double startY;
+    private double startDirX;
+    private double startDirY;
 
     private int currLife;
     private List<LifeIndicator> lives;
@@ -73,32 +73,40 @@ public class Player {
     public double getDirectionY ( ) { return this.directionY; }
 
     public void setMoveForward(boolean newValue) {
-        if (!directionSwitched)
+        if (!directionSwitched) {
             this.moveForward = newValue;
+            this.moveBackward = false;
+        }
         else {
             this.moveBackward = newValue;
             this.moveForward = false;
         }
     }
     public void setMoveBackward(boolean newValue) {
-        if (!directionSwitched)
-            this.moveBackward  = newValue;
+        if (!directionSwitched) {
+            this.moveBackward = newValue;
+            this.moveForward = false;
+        }
         else {
             this.moveForward = newValue;
             this.moveBackward = false;
         }
     }
     public void setRotateLeft(boolean newValue) {
-        if (!directionSwitched)
-            this.rotateLeft  = newValue;
+        if (!directionSwitched) {
+            this.rotateLeft = newValue;
+            this.rotateRight = false;
+        }
         else {
             this.rotateRight = newValue;
             this.rotateLeft = false;
         }
     }
     public void setRotateRight(boolean newValue) {
-        if (!directionSwitched)
-            this.rotateRight  = newValue;
+        if (!directionSwitched) {
+            this.rotateRight = newValue;
+            this.rotateLeft = false;
+        }
         else {
             this.rotateLeft = newValue;
             this.rotateRight = false;
@@ -168,6 +176,19 @@ public class Player {
         this.positionY = startY;
         this.directionX = startDirX;
         this.directionY = startDirY;
+    }
+
+    public void setStartPosition(double x, double y, double directionX, double directionY) {
+        this.positionX = x;
+        this.positionY = y;
+        this.startX = x;
+        this.startY = y;
+
+        this.directionX =  directionX;
+        this.directionY =  directionY;
+
+        this.startDirX = this.directionX;
+        this.startDirY = this.directionY;
     }
 
     public int getCurrLife() { return currLife; }

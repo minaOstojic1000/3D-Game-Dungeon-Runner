@@ -1,13 +1,13 @@
 package dungeonrunner.figures;
 
 import dungeonrunner.Player;
+import dungeonrunner.constants.Constants;
 import dungeonrunner.constants.Enums;
-import dungeonrunner.interfaces.IPickup;
-import dungeonrunner.interfaces.IPowerUp;
 import javafx.animation.*;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Group;
 import javafx.scene.paint.Material;
+import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Translate;
@@ -19,7 +19,7 @@ public class Doors extends Group {
     private final double height;
     private final double depth;
     private final Enums.AXIS openingAxis;
-    private Box doorL, doorR;
+    private Group doorL, doorR;
     private Timeline opening;
     private final double positionX;
     private final double positionZ;
@@ -29,8 +29,7 @@ public class Doors extends Group {
 
     public Doors(double height, double width, double depth,
                  double positionX, double positionY, double positionZ,
-                 Enums.AXIS openingAxis, double openingDuration,
-                 Material material) {
+                 Enums.AXIS openingAxis, double openingDuration) {
         super();
 
         this.width = width;
@@ -43,7 +42,7 @@ public class Doors extends Group {
         this.positionX = positionX;
         this.positionZ = positionZ;
 
-        makeDoors(material);
+        makeDoors();
 
         this.getTransforms().add(
                 new Translate(positionX, positionY, positionZ)
@@ -83,12 +82,12 @@ public class Doors extends Group {
         );
     }
 
-    private void makeDoors(Material material) {
-        double w = (openingAxis == Enums.AXIS.X) ? width / 2. : depth;
-        double d = (openingAxis == Enums.AXIS.X) ? depth : width / 2.;
+    private void makeDoors() {
 
-        doorL = new Box(w, height, d);
-        doorR = new Box(w, height, d);
+        doorL = new Group();
+        doorR = new Group();
+
+        setUpDoorsSides();
 
         if (openingAxis == Enums.AXIS.X) {
             doorL.getTransforms().addAll(
@@ -107,10 +106,61 @@ public class Doors extends Group {
             );
         }
 
-        doorL.setMaterial(material);
-        doorR.setMaterial(material);
-
         this.getChildren().addAll(doorL, doorR);
+    }
+
+    private void setUpDoorsSides() {
+
+        double boxW = (openingAxis == Enums.AXIS.X) ? width / 2. : depth / 2.;
+        double boxD = (openingAxis == Enums.AXIS.X) ? depth / 2. : width / 2.;
+
+        Box doorLBoxF = new Box(boxW, height, boxD);
+        Box doorLBoxB = new Box(boxW, height, boxD);
+        doorL.getChildren().addAll(doorLBoxF, doorLBoxB);
+
+        Box doorRBoxF = new Box(boxW, height, boxD);
+        Box doorRBoxB = new Box(boxW, height, boxD);
+        doorR.getChildren().addAll(doorRBoxF, doorRBoxB);
+
+        if (openingAxis == Enums.AXIS.X) {
+            doorLBoxF.getTransforms().addAll(
+                    new Translate(0, 0, -boxD / 2.)
+            );
+            doorRBoxF.getTransforms().addAll(
+                    new Translate(0, 0, -boxD / 2.)
+            );
+            doorLBoxB.getTransforms().addAll(
+                    new Translate(0, 0, boxD / 2.)
+            );
+            doorRBoxB.getTransforms().addAll(
+                    new Translate(0, 0, boxD / 2.)
+            );
+        }
+        else {
+            doorLBoxF.getTransforms().addAll(
+                    new Translate(boxW / 2., 0, 0)
+            );
+            doorRBoxF.getTransforms().addAll(
+                    new Translate(boxW / 2., 0, 0)
+            );
+            doorLBoxB.getTransforms().addAll(
+                    new Translate(-boxW / 2., 0, 0)
+            );
+            doorRBoxB.getTransforms().addAll(
+                    new Translate(-boxW / 2., 0, 0)
+            );
+        }
+
+        PhongMaterial leftMaterial = new PhongMaterial();
+        leftMaterial.setDiffuseMap(Constants.DOOR_LEFT_IMG);
+
+        PhongMaterial rightMaterial = new PhongMaterial();
+        rightMaterial.setDiffuseMap(Constants.DOOR_RIGHT_IMG);
+
+        doorLBoxF.setMaterial(leftMaterial);
+        doorRBoxF.setMaterial(rightMaterial);
+        doorLBoxB.setMaterial(rightMaterial);
+        doorRBoxB.setMaterial(leftMaterial);
     }
 
     public void unlock() {
