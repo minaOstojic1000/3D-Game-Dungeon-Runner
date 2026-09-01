@@ -160,9 +160,9 @@ public class Constants {
     public static final Color DOORS_SPECULAR_COLOR = Color.color(0.55, 0.45, 0.38);
     public static final double DOORS_OPENING_TIME = 3;
     public static final Image DOOR_LEFT_IMG =
-            new Image(Objects.requireNonNull(Maps.class.getResourceAsStream("/dungeonrunner/doors/leftDoor.png")));
+            new Image(Objects.requireNonNull(Maps.class.getResourceAsStream("/dungeonrunner/doors/leftDoor.jpg")));
     public static final Image DOOR_RIGHT_IMG =
-            new Image(Objects.requireNonNull(Maps.class.getResourceAsStream("/dungeonrunner/doors/rightDoor.png")));
+            new Image(Objects.requireNonNull(Maps.class.getResourceAsStream("/dungeonrunner/doors/rightDoor.jpg")));
 
 
     public static final double DOORS_CONTROL_WIDTH = CELL_SIZE * 0.1;
@@ -177,11 +177,11 @@ public class Constants {
     public static final double GUARD_SPEED = 1;
 
     public static final Image GUARD_IMAGE_HEAD =
-            new Image(Objects.requireNonNull(Maps.class.getResourceAsStream("/dungeonrunner/guard/head.png")));
+            new Image(Objects.requireNonNull(Maps.class.getResourceAsStream("/dungeonrunner/guard/head.jpg")));
     public static final Image GUARD_IMAGE_BODY =
-            new Image(Objects.requireNonNull(Maps.class.getResourceAsStream("/dungeonrunner/guard/body.png")));
+            new Image(Objects.requireNonNull(Maps.class.getResourceAsStream("/dungeonrunner/guard/body.jpg")));
     public static final Image GUARD_IMAGE_ARM =
-            new Image(Objects.requireNonNull(Maps.class.getResourceAsStream("/dungeonrunner/guard/arm.png")));
+            new Image(Objects.requireNonNull(Maps.class.getResourceAsStream("/dungeonrunner/guard/arm.jpg")));
     public static final Image GUARD_IMAGE_LEGS =
-            new Image(Objects.requireNonNull(Maps.class.getResourceAsStream("/dungeonrunner/guard/legs.png")));
+            new Image(Objects.requireNonNull(Maps.class.getResourceAsStream("/dungeonrunner/guard/legs.jpg")));
 }
