@@ -23,7 +23,7 @@ Some passages are blocked by doors that can only be opened by activating the cor
 ## 🚀 Quick Start
 
 A pre-built version of the game is available in the
-[latest GitHub Release](LINK_TO_LATEST_RELEASE).
+[latest GitHub Release](https://github.com/minaOstojic1000/3D-Game-Dungeon-Runner/releases/latest).
 
 ### 🪟 Option 1: Windows — no Java required
 
